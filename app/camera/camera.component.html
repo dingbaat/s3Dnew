@@ -1,0 +1,22 @@
+<div *ngIf="myLoginService.isLoggedIn()" class="">
+
+  <h1>Camera {{name}}</h1>
+
+  <button (click)="test()">Test</button>
+
+  <!--TODO Display camera settings, e.g. battery, nd-->
+
+  <!--line 9:15 - Bindings between camera.component (currProps) and views.element (activeMode, activeValue)-->
+  <property *ngFor="let prop of props"
+              (propChangeRequested)="changeProperty($event)"
+              [prop]="prop"
+              [activeMode]="prop.desc == 'whitebalance'? currProps.Owbm.pv :
+                            prop.desc == 'shutterspeed'? currProps.Ossm.pv :
+                            prop.desc == 'iso/gain'? currProps.Ogcm.pv : null"
+              [activeValue]="prop.desc == 'whitebalance'? currProps.Owbv.pv :
+                             prop.desc == 'shutterspeed'? currProps.Ossv.pv :
+                             prop.desc == 'iso/gain'? currProps.Ogcv.pv :
+                             prop.desc == 'aperture'? currProps.Oav.pv : null">
+  </property>
+
+</div>

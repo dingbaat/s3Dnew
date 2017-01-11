@@ -1,0 +1,26 @@
+<div *ngIf="!myLoginService.isLoggedIn()" class="well well-sm">
+  <p>
+    Camera-Left
+    <input [(ngModel)]="ip_left" placeholder="192.168.0.2">
+    Username
+    <input [(ngModel)]="user_left">
+    Password
+    <input [(ngModel)]="pass_left" type="password">
+  </p>
+  <p>
+    Camera-Right
+    <input [(ngModel)]="ip_right" placeholder="192.168.0.3">
+    Username
+    <input [(ngModel)]="user_right">
+    Password
+    <input [(ngModel)]="pass_right" type="password">
+  </p>
+  <button (click)="login()">Connect</button>
+</div>
+
+<div *ngIf="myLoginService.isLoggedIn()" class="well well-sm">
+  <p>
+    Camera-Left: {{ip_left}} | Camera-Right: {{ip_right}}
+    <button (click)="logout()">Disconnect</button>
+  </p>
+</div>

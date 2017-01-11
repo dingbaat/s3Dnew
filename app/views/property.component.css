@@ -1,0 +1,26 @@
+/*
+a {
+
+    border: 1px solid black;
+    margin: 10px;
+    padding: 10px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+a:hover {
+
+    background-color: #bce5ff;
+
+}
+
+.activeMode, .activeValue {
+
+    background-color: #60ce93;
+}
+
+.hidden {
+
+    display: none;
+}
+*/

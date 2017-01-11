@@ -1,0 +1,92 @@
+<div [ngClass]="prop.desc">
+  <div id="aperture-settings" class="settings-wrapper {{prop.propType}}">
+    <div class="settings-header-wrapper">
+      <h3>{{prop.desc}}<i class="fa fa-check-circle" aria-hidden="true"></i></h3>
+    </div>
+
+
+    <!--Template: Mode/Value, e.g. whitebalance-->
+    <template [ngIf]="prop.desc == 'whitebalance' ||
+     prop.desc == 'shutterspeed' ||
+      prop.desc == 'iso/gain' ">
+
+      <div *ngFor="let query of prop.queries">
+
+        <a data-type="mode"
+           [attr.data-key]="query[0].key"
+           [attr.data-value]="query[0].value"
+           [ngClass]="{'activeMode':query[0].value==activeMode,
+               'hidden': query[0].value!=activeMode && (modesCollapsed || !valuesCollapsed)}"
+           (click)="onClick($event)">
+          {{query[0].name}}
+        </a>
+
+        <template [ngIf]="query[1]">
+          <a data-type="value"
+             [attr.data-mode]="query[0].value"
+             [attr.data-key]="query[1].key"
+             [attr.data-value]="value"
+             *ngFor="let value of query[1].value"
+             [ngClass]="{'activeValue': value==activeValue && query[0].value==activeMode,
+                   'hidden': (value!=activeValue || query[0].value!=activeMode) && (valuesCollapsed || !modesCollapsed  || (!valuesCollapsed && query[0].value!=activeMode))}"
+             (click)="onClick($event)">
+            {{value}}
+          </a>
+        </template>
+
+      </div>
+
+    </template>
+
+    <!--Template: only Value, e.g. aperture-->
+    <template [ngIf]="prop.desc != 'whitebalance' &&
+     prop.desc != 'shutterspeed' &&
+      prop.desc != 'iso/gain' ">
+
+      <div *ngFor="let query of prop.queries">
+
+        <!--other properties-->
+        <template [ngIf]="query.value | ArrayChecker:'isnot'">
+          <a data-type="value"
+             [attr.data-key]="query.key"
+             [attr.data-value]="query.value"
+             (click)="onClick($event)">
+            {{query.name}}
+          </a>
+        </template>
+
+        <!--aperture-->
+        <template [ngIf]="query.value | ArrayChecker:'is'">
+
+          <div class="dropdown aperture-dropdown">
+
+            <button data-propType="valueBtn" (click)="onClick($event)" class="btn btn-default dropdown-toggle"
+                    type="button" id="aperture-dropdown-menu-left"
+                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+              f/<span>{{activeValue}}</span>
+              <span class="caret"></span>
+            </button>
+
+            <ul class="dropdown-menu" aria-labelledby="aperture-dropdown-menu-left"
+                [ngClass]="{'collapsed':valuesCollapsed==true}">
+
+              <li *ngFor="let value of query.value"
+                  data-type="value"
+                  [attr.data-key]="query.key"
+                  [attr.data-value]="value"
+                  [ngClass]="{'activeValue':value==activeValue}"
+                  (click)="onClick($event)">
+                <a href="#">f/<span>{{value}}</span></a>
+              </li>
+
+            </ul>
+          </div>
+
+        </template>
+
+      </div>
+
+    </template>
+
+  </div>
+</div>

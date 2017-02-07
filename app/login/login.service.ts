@@ -10,7 +10,7 @@ export class LoginService {
   private user_right: string;
   private pass_left: string;
   private pass_right: string;
-  private loggedIn: boolean = false;
+  private loggedIn: boolean = true;
 
   private myNetworkService: NetworkService;
 

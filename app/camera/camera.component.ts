@@ -4,40 +4,40 @@ import {CameraService} from "./camera.service";
 import {LoginService} from "../login/login.service";
 
 @Component({
-  moduleId: module.id,
-  selector: 'camera',
-  templateUrl: 'camera.component.html'
+    moduleId: module.id,
+    selector: 'camera',
+    templateUrl: 'camera.component.html'
 })
 
 export class CameraComponent implements OnInit {
 
-  myLoginService: LoginService;
-  myCameraService: CameraService;
+    myLoginService: LoginService;
+    myCameraService: CameraService;
 
-  @Input()
-  name: string;
-  props: any;
-  currProps: any;
-  genProps: any;
+    @Input()
+    name: string;
+    adjProps: any;
+    currProps: any;
+    genProps: any;
 
-  constructor(private cameraService: CameraService, private loginService: LoginService) {
-    this.myLoginService = loginService;
-    this.myCameraService = cameraService;
-  }
+    constructor(private cameraService: CameraService, private loginService: LoginService) {
+        this.myLoginService = loginService;
+        this.myCameraService = cameraService;
+    }
 
-  ngOnInit() {
-    this.props = this.myCameraService.getProps(this.name);
-    this.currProps = this.myCameraService.getCurrProps(this.name);
-    this.genProps = this.myCameraService.getGenProps(this.name);
-  }
+    ngOnInit() {
+        this.adjProps = this.myCameraService.getAdjustableProps(this.name);
+        this.currProps = this.myCameraService.getCurrProps(this.name);
+        this.genProps = this.myCameraService.getGenProps(this.name);
+    }
 
-  public test() {
-    console.log(this.name);
-  }
+    public test() {
+        console.log(this.name);
+    }
 
-  public changeProperty(query: string): void {
-    this.myCameraService.changeProperty(this.name, query);
-  }
+    public changeProperty(query: string): void {
+        this.myCameraService.changeProperty(this.name, query);
+    }
 
 }
 

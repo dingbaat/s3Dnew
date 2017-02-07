@@ -1,0 +1,13 @@
+<h2>Liveview</h2>
+
+<img src="./app/images/stereo-test-image.png" style="width: 500px">
+
+<div>
+    <p-toggleButton onLabel="Stop"
+                    offLabel="Start"
+                    onIcon="fa-stop"
+                    offIcon="fa-play"
+                    [(ngModel)]="checked"
+                    (onChange)="sendPropertyChangeRequest()">
+    </p-toggleButton>
+</div>

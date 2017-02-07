@@ -1,22 +1,46 @@
 <div *ngIf="myLoginService.isLoggedIn()" class="">
 
-  <h1>Camera {{name}}</h1>
+    <h1>Camera {{name}}</h1>
 
-  <button (click)="test()">Test</button>
+    <button (click)="test()">Test</button>
 
-  <!--TODO Display camera settings, e.g. battery, nd-->
+    <!--TODO Display camera settings, e.g. battery, nd-->
 
-  <!--line 9:15 - Bindings between camera.component (currProps) and views.element (activeMode, activeValue)-->
-  <property *ngFor="let prop of props"
-              (propChangeRequested)="changeProperty($event)"
-              [prop]="prop"
-              [activeMode]="prop.desc == 'whitebalance'? currProps.Owbm.pv :
-                            prop.desc == 'shutterspeed'? currProps.Ossm.pv :
-                            prop.desc == 'iso/gain'? currProps.Ogcm.pv : null"
-              [activeValue]="prop.desc == 'whitebalance'? currProps.Owbv.pv :
-                             prop.desc == 'shutterspeed'? currProps.Ossv.pv :
-                             prop.desc == 'iso/gain'? currProps.Ogcv.pv :
-                             prop.desc == 'aperture'? currProps.Oav.pv : null">
-  </property>
+    <!--line 9:15 - Bindings between camera.component (currProps) and views.element (activeMode, activeValue)
+    <property *ngFor="let prop of props"
+                (propChangeRequested)="changeProperty($event)"
+                [prop]="prop"
+                [activeMode]="prop.desc == 'whitebalance'? currProps.Owbm.pv :
+                              prop.desc == 'shutterspeed'? currProps.Ossm.pv :
+                              prop.desc == 'iso/gain'? currProps.Ogcm.pv : null"
+                [activeValue]="prop.desc == 'whitebalance'? currProps.Owbv.pv :
+                               prop.desc == 'shutterspeed'? currProps.Ossv.pv :
+                               prop.desc == 'iso/gain'? currProps.Ogcv.pv :
+                               prop.desc == 'aperture'? currProps.Oav.pv : null">
+    </property>-->
+
+    <div *ngFor="let prop of adjProps">
+
+        <template [ngIf]="prop.type == 'slider' ">
+            <slider [prop]="prop" (propChangeRequested)="changeProperty($event)"></slider>
+        </template>
+
+        <template [ngIf]="prop.type == 'dropdown+slider' ">
+            <dropdown_slider [prop]="prop" (propChangeRequested)="changeProperty($event)"></dropdown_slider>
+        </template>
+
+        <template [ngIf]="prop.type == 'buttons' ">
+            <buttons [prop]="prop" (propChangeRequested)="changeProperty($event)"></buttons>
+        </template>
+
+        <template [ngIf]="prop.type == 'toggle' ">
+            <toggle [prop]="prop" (propChangeRequested)="changeProperty($event)"></toggle>
+        </template>
+
+    </div>
+
+    <div>
+        <liveview [props]="adjProps" (propChangeRequested)="changeProperty($event)"></liveview>
+    </div>
 
 </div>

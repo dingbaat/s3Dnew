@@ -1,0 +1,14 @@
+<h2>{{prop.desc}}</h2>
+<div>
+    <p-dropdown [options]="modes" [(ngModel)]="selectedMode" (onChange)="onModeChange()"></p-dropdown>
+</div>
+
+<template ngFor let-value="$implicit" [ngForOf]="values" let-i="index">
+    <div *ngIf="selectedMode == modes[i].value && value.length != 0">
+        <button pButton type="button" icon="fa-backward" (click)="onFirstValue(i)"></button>
+        <button pButton type="button" icon="fa-step-backward" (click)="onDecrementValue(i)"></button>
+        <p-dropdown [options]="value" [(ngModel)]="selectedValues[i]" (onChange)="onValueChange(i)"></p-dropdown>
+        <button pButton type="button" icon="fa-step-forward" (click)="onIncrementValue(i)"></button>
+        <button pButton type="button" icon="fa-forward" (click)="onLastValue(i)"></button>
+    </div>
+</template>

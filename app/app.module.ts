@@ -2,38 +2,57 @@ import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
+import 'rxjs/add/operator/toPromise';
 
 import {AppComponent} from "./app.component";
 import {LoginComponent} from "./login/login.component";
 import {CameraComponent} from "./camera/camera.component";
 import {ArrayCheckerPipe} from "./utils/array-checker.pipe";
 import {PropertyComponent} from "./views/property.component";
+import {DropdownSliderComponent} from "./views/dropdown_slider.component";
+import {ButtonsComponent} from "./views/buttons.component";
+import {SliderComponent} from "./views/slider.component";
+import {ToggleComponent} from "./views/toggle.component";
+import {LiveviewComponent} from "./views/liveview.component";
 
 import {LoginService} from "./login/login.service";
 import {NetworkService} from "./utils/network.service";
 import {CameraService} from "./camera/camera.service";
 import {AppService} from "./app.service";
 
+import {
+    DropdownModule,
+    SliderModule,
+    ButtonModule,
+    ToggleButtonModule
+} from 'primeng/primeng';
+
 @NgModule({
-  declarations: [
-    AppComponent,
-    ArrayCheckerPipe,
-    LoginComponent,
-    CameraComponent,
-    PropertyComponent
-  ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpModule,
-  ],
-  providers: [
-    LoginService,
-    CameraService,
-    NetworkService,
-    AppService
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        ArrayCheckerPipe,
+        LoginComponent,
+        CameraComponent,
+        PropertyComponent,
+        DropdownSliderComponent,
+        ButtonsComponent,
+        SliderComponent,
+        ToggleComponent,
+        LiveviewComponent
+    ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpModule,
+        ToggleButtonModule, DropdownModule, SliderModule, ButtonModule
+    ],
+    providers: [
+        LoginService,
+        CameraService,
+        NetworkService,
+        AppService
+    ],
+    bootstrap: [AppComponent]
 })
 
 export class AppModule {

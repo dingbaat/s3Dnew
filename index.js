@@ -7,8 +7,7 @@ const path = require('path')
 const url = require('url')
 const request = require('request');
 
-
-let mainWindow
+let mainWindow;
 
 function init() {
 

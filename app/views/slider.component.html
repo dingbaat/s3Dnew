@@ -1,0 +1,9 @@
+<h2>{{prop.desc}}</h2>
+
+<div>
+    <button pButton type="button" icon="fa-backward" (click)="onFirstValue()"></button>
+    <button pButton type="button" icon="fa-step-backward" (click)="onDecrementValue()"></button>
+    <p-dropdown [options]="values" [(ngModel)]="selectedValue" (onChange)="onValueChange()"></p-dropdown>
+    <button pButton type="button" icon="fa-step-forward" (click)="onIncrementValue()"></button>
+    <button pButton type="button" icon="fa-forward" (click)="onLastValue()"></button>
+</div>

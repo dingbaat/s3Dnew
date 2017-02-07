@@ -1,0 +1,10 @@
+<h2>{{prop.desc}}</h2>
+<div>
+    <p-toggleButton onLabel="Stop"
+                    offLabel="Start"
+                    onIcon="fa-stop"
+                    offIcon="fa-play"
+                    [(ngModel)]="checked"
+                    (onChange)="sendPropertyChangeRequest()">
+    </p-toggleButton>
+</div>

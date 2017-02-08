@@ -16,19 +16,19 @@ export class DropdownSliderComponent {
     propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
 
     modes: any;
-    selectedMode: string;
-    prevSelectedMode: string;
+    @Input()
+    selectedMode: any;
+    prevSelectedMode: any;
 
     values: any;
-    selectedValues: string[];
-    prevSelectedValues: string[];
+    @Input()
+    selectedValue: any;
+    prevSelectedValue: any;
 
 
     constructor() {
         this.modes = [];
         this.values = [];
-        this.selectedValues = [];
-        this.prevSelectedValues = [];
     }
 
     ngOnInit() {
@@ -37,9 +37,7 @@ export class DropdownSliderComponent {
         for (var query of this.prop.queries) {
             this.modes.push({label: query[0].name, value: {key: query[0].key, value: query[0].value}});
         }
-        //TODO Set initial mode to currentCameraProperties
-        this.selectedMode = this.modes[0].value;
-        this.prevSelectedMode = this.modes[0].value;
+        this.prevSelectedMode = this.selectedMode;
 
         //Setup Values
         for (var query of this.prop.queries) {
@@ -62,17 +60,13 @@ export class DropdownSliderComponent {
                 }
 
                 this.values.push(temp);
-                //TODO Set initial value to currentCameraProperties
-                this.selectedValues.push(temp[0].value);
-                this.prevSelectedValues.push(temp[0].value);
 
             } else {
 
                 this.values.push([]);
-                this.selectedValues.push("");
-                this.prevSelectedValues.push("");
             }
         }
+        this.prevSelectedValue = this.selectedValue;
     }
 
     onModeChange() {
@@ -86,11 +80,11 @@ export class DropdownSliderComponent {
 
     onValueChange(index: number) {
 
-        if (this.selectedValues[index] != this.prevSelectedValues[index]) {
-            this.sendPropertyChangeRequest(this.selectedValues[index]);
+        if (this.selectedValue != this.prevSelectedValue) {
+            this.sendPropertyChangeRequest(this.selectedValue);
         }
 
-        this.prevSelectedValues[index] = this.selectedValues[index];
+        this.prevSelectedValue = this.selectedValue;
     }
 
     onIncrementValue(index: number) {
@@ -99,9 +93,9 @@ export class DropdownSliderComponent {
         var targetIndex = currIndex == this.values[index].length - 1 ? currIndex : currIndex + 1;
 
         if (currIndex != targetIndex) {
-            this.selectedValues[index] = this.values[index][targetIndex].value;
-            this.prevSelectedValues[index] = this.selectedValues[index];
-            this.sendPropertyChangeRequest(this.selectedValues[index]);
+            this.selectedValue = this.values[index][targetIndex].value;
+            this.prevSelectedValue = this.selectedValue;
+            this.sendPropertyChangeRequest(this.selectedValue);
         }
     }
 
@@ -111,9 +105,9 @@ export class DropdownSliderComponent {
         var targetIndex = currIndex == 0 ? currIndex : currIndex - 1;
 
         if (currIndex != targetIndex) {
-            this.selectedValues[index] = this.values[index][targetIndex].value;
-            this.prevSelectedValues[index] = this.selectedValues[index];
-            this.sendPropertyChangeRequest(this.selectedValues[index]);
+            this.selectedValue = this.values[index][targetIndex].value;
+            this.prevSelectedValue = this.selectedValue;
+            this.sendPropertyChangeRequest(this.selectedValue);
         }
     }
 
@@ -123,9 +117,9 @@ export class DropdownSliderComponent {
         var targetIndex = 0;
 
         if (currIndex != targetIndex) {
-            this.selectedValues[index] = this.values[index][targetIndex].value;
-            this.prevSelectedValues[index] = this.selectedValues[index];
-            this.sendPropertyChangeRequest(this.selectedValues[index]);
+            this.selectedValue = this.values[index][targetIndex].value;
+            this.prevSelectedValue = this.selectedValue;
+            this.sendPropertyChangeRequest(this.selectedValue);
         }
     }
 
@@ -135,16 +129,16 @@ export class DropdownSliderComponent {
         var targetIndex = this.values[index].length - 1;
 
         if (currIndex != targetIndex) {
-            this.selectedValues[index] = this.values[index][targetIndex].value;
-            this.prevSelectedValues[index] = this.selectedValues[index];
-            this.sendPropertyChangeRequest(this.selectedValues[index]);
+            this.selectedValue = this.values[index][targetIndex].value;
+            this.prevSelectedValue = this.selectedValue;
+            this.sendPropertyChangeRequest(this.selectedValue);
         }
     }
 
     getIndexOfValue(index: number): number {
 
         for (var _i = 0; _i < this.values[index].length; _i++) {
-            if (this.values[index][_i].value == this.selectedValues[index]) {
+            if (this.values[index][_i].value.value == this.selectedValue.value) {
                 return _i
             }
         }

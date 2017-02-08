@@ -16,7 +16,10 @@ export class SliderComponent {
     propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
 
     values: any;
+
+    @Input()
     selectedValue: any;
+
     prevSelectedValue: any;
 
 
@@ -44,8 +47,10 @@ export class SliderComponent {
         }
 
         //TODO Set initial value to currentCameraProperties
-        this.selectedValue = values[0].value;
-        this.prevSelectedValue = values[0].value;
+        //this.selectedValue = values[0].value;
+        //this.prevSelectedValue = values[0].value;
+        this.prevSelectedValue = this.selectedValue;
+
     }
 
     onValueChange() {
@@ -108,7 +113,7 @@ export class SliderComponent {
     getIndexOfSelectedValue(): number {
 
         for (var _i = 0; _i < this.values.length; _i++) {
-            if (this.values[_i].value == this.selectedValue) {
+            if (this.values[_i].value.value == this.selectedValue.value) {
                 return _i
             }
         }

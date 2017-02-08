@@ -1,14 +1,22 @@
-<h2>{{prop.desc}}</h2>
-<div>
-    <p-dropdown [options]="modes" [(ngModel)]="selectedMode" (onChange)="onModeChange()"></p-dropdown>
-</div>
-
-<template ngFor let-value="$implicit" [ngForOf]="values" let-i="index">
-    <div *ngIf="selectedMode == modes[i].value && value.length != 0">
-        <button pButton type="button" icon="fa-backward" (click)="onFirstValue(i)"></button>
-        <button pButton type="button" icon="fa-step-backward" (click)="onDecrementValue(i)"></button>
-        <p-dropdown [options]="value" [(ngModel)]="selectedValues[i]" (onChange)="onValueChange(i)"></p-dropdown>
-        <button pButton type="button" icon="fa-step-forward" (click)="onIncrementValue(i)"></button>
-        <button pButton type="button" icon="fa-forward" (click)="onLastValue(i)"></button>
+<div class="settings-wrapper">
+    <div class="settings-header-wrapper">
+        <h3>{{prop.desc}} <i class="fa fa-check-circle" aria-hidden="true"></i></h3>
     </div>
-</template>
+
+    <div class="settings-content dropdown-slider">
+        <div>
+            <p-dropdown class="dropdown dropdown-slider-main-dropdown" [options]="modes" [(ngModel)]="selectedMode" (onChange)="onModeChange()"></p-dropdown>
+        </div>
+
+        <template ngFor let-value="$implicit" [ngForOf]="values" let-i="index">
+            <div *ngIf="selectedMode.value == modes[i].value.value && value.length != 0">
+                <button class="slider-backward" pButton type="button" icon="fa-backward" (click)="onFirstValue(i)"></button>
+                <button class="slider-step-backward" pButton type="button" icon="fa-step-backward" (click)="onDecrementValue(i)"></button>
+                <p-dropdown class="dropdown" [options]="value" [(ngModel)]="selectedValue" (onChange)="onValueChange(i)"></p-dropdown>
+                <button class="slider-step-forward" pButton type="button" icon="fa-step-forward" (click)="onIncrementValue(i)"></button>
+                <button class="slider-forward" pButton type="button" icon="fa-forward" (click)="onLastValue(i)"></button>
+            </div>
+        </template>
+    </div>
+
+</div>

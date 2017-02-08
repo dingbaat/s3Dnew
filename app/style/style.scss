@@ -47,7 +47,8 @@ $divider: #BDBDBD;
 $primaryColorDark: #0097A7;
 $primaryColorLight: #00BCD4;
 $primaryColorSluggish: #B2EBF2;
-$accentColor: #FF4081;
+//$accentColor: #FF4081;
+$accentColor:#0275d8;
 $textWhite: #FFFFFF;
 $textDark: #212121;
 $textSecondary: #757575;
@@ -428,6 +429,13 @@ div.main-page {
       background: rgba(33,33,33, 0.6);
       height:100%;
 
+      button {
+        background:$accentColor;
+      }
+      button:hover {
+        background: darken($accentColor, 10%);
+      }
+
       .live-view-wrapper {
         text-align: center;
 
@@ -474,6 +482,12 @@ div.main-page {
         .bottom-left, .bottom-right {
           width:50%;
           float:left;
+        }
+
+        .record-buttons, .live-view-buttons {
+          .settings-header-wrapper {
+            display:none;
+          }
         }
 
         .bottom-left {
@@ -548,6 +562,87 @@ div.main-page {
               position:absolute;
               right:5px;
             }
+          }
+        }
+        .settings-content {
+          width:80%;
+          min-width:70px;
+          margin: 0 auto;
+          text-align:left;
+
+          button {
+            background:$accentColor !important;
+          }
+          button:hover {
+            background: darken($accentColor, 10%) !important;
+          }
+          .dropdown {
+            li {
+              span {
+                color:$textDark;
+              }
+            }
+            li.ui-state-highlight {
+              span {
+                color:$textWhite;
+              }
+            }
+          }
+        }
+        .settings-content.slider {
+          .slider-backward, .slider-step-backward, .slider-step-forward, .slider-forward {
+            width:12%;
+            margin-right:0 !important;
+            margin-left:0 !important;
+          }
+          .slider-backward, .slider-step-forward {
+            margin-right:1%;
+          }
+          .dropdown {
+            width:43.5%;
+            margin-right:1%;
+            margin-left:1%;
+
+            .ui-dropdown {
+              width:43.5% !important;
+            }
+          }
+        }
+        .settings-content.dropdown-slider {
+          .slider-backward, .slider-step-backward, .slider-step-forward, .slider-forward {
+            width:12%;
+            margin-right:0 !important;
+            margin-left:0 !important;
+          }
+          .slider-backward, .slider-step-forward {
+            margin-right:1%;
+          }
+          .dropdown {
+            width:43.5%;
+            margin-right:1%;
+            margin-left:1%;
+
+            .ui-dropdown {
+              width:43.5% !important;
+            }
+          }
+
+          .dropdown-slider-main-dropdown {
+            display: block;
+            width: 100%;
+            margin-bottom: 15px;
+
+            .ui-dropdown {
+              width:100% !important;
+            }
+          }
+        }
+        .settings-content.buttons {
+          .single-button {
+            width:100%;
+          }
+          .plus-minus-button {
+            width:12%;
           }
         }
       }

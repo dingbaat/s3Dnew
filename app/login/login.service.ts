@@ -1,5 +1,9 @@
 import {Injectable} from '@angular/core';
 import {NetworkService} from "../utils/network.service";
+import {Http, Response} from '@angular/http';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/catch';
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class LoginService {
@@ -10,12 +14,11 @@ export class LoginService {
   private user_right: string;
   private pass_left: string;
   private pass_right: string;
-  private loggedIn: boolean = true;
+  public loggedIn: boolean = false;
 
   private myNetworkService: NetworkService;
 
-  constructor(private networkService: NetworkService) {
-
+  constructor(private networkService: NetworkService, private http: Http) {
     this.myNetworkService = networkService;
   }
 
@@ -45,12 +48,20 @@ export class LoginService {
     this.loggedIn = false;
   }
 
-  isLoggedIn(): boolean {
+  public isLoggedIn(): boolean {
     return this.loggedIn;
   }
 
   getIp(name: string) {
     return name == "left" ? this.ip_left : this.ip_right;
+  }
+
+  public checkConnection(ipAddress : string)  {
+    return this.http.get(ipAddress).map(this.extractData);
+  }
+
+  private extractData(response : Response) {
+    return response;
   }
 
 }

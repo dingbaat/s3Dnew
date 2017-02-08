@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 
 import {CameraService} from "./camera.service";
 import {LoginService} from "../login/login.service";
+import {Injectable, NgZone} from '@angular/core';
 
 @Component({
     moduleId: module.id,
@@ -13,6 +14,7 @@ export class CameraComponent implements OnInit {
 
     myLoginService: LoginService;
     myCameraService: CameraService;
+    private zone: NgZone;
 
     @Input()
     name: string;
@@ -20,7 +22,8 @@ export class CameraComponent implements OnInit {
     currProps: any;
     genProps: any;
 
-    constructor(private cameraService: CameraService, private loginService: LoginService) {
+
+    constructor(private cameraService: CameraService, private loginService: LoginService, zone: NgZone) {
         this.myLoginService = loginService;
         this.myCameraService = cameraService;
     }
@@ -32,7 +35,13 @@ export class CameraComponent implements OnInit {
     }
 
     public test() {
-        console.log(this.name);
+
+
+        this.currProps.Ossm.pv = "cls";
+        this.currProps.Owbm.pv = "Kelvin";
+        this.currProps.Ogcm.pv = "gain";
+
+
     }
 
     public changeProperty(query: string): void {

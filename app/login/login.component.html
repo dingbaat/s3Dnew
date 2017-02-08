@@ -1,26 +1,44 @@
-<div *ngIf="!myLoginService.isLoggedIn()" class="well well-sm">
-  <p>
-    Camera-Left
-    <input [(ngModel)]="ip_left" placeholder="192.168.0.2">
-    Username
-    <input [(ngModel)]="user_left">
-    Password
-    <input [(ngModel)]="pass_left" type="password">
-  </p>
-  <p>
-    Camera-Right
-    <input [(ngModel)]="ip_right" placeholder="192.168.0.3">
-    Username
-    <input [(ngModel)]="user_right">
-    Password
-    <input [(ngModel)]="pass_right" type="password">
-  </p>
-  <button (click)="login()">Connect</button>
-</div>
 
-<div *ngIf="myLoginService.isLoggedIn()" class="well well-sm">
-  <p>
-    Camera-Left: {{ip_left}} | Camera-Right: {{ip_right}}
-    <button (click)="logout()">Disconnect</button>
-  </p>
+
+<div class="login-box col-md-8 col-md-offset-2">
+  <div class="camera-login-box" id="camera-1-login">
+    <h2>Left Camera</h2>
+    <div class="login-input-wrapper">
+      <i class="fa fa-wifi" aria-hidden="true"></i>
+      <input (change)="validateIPAdress(0)" [(ngModel)]="leftCameraInput.ipAddress" name="ipAddressLeft" class="{{leftCameraInput.ipAddressValid === true ? '' : 'error'}}" placeholder="IP Adress" id="ip-camera-1" type="text">
+      <p class="error-message {{leftCameraInput.ipAddressValid === true ? '' : 'active'}}" data-target="ip-camera-1">Ungültige IP-Adresse</p>
+    </div>
+    <div class="login-input-wrapper">
+      <i class="fa fa-user" aria-hidden="true"></i>
+      <input (change)="validateTextInput(0, 0)" [(ngModel)]="leftCameraInput.username" name="usernameLeft" class="{{leftCameraInput.usernameValid === true ? '' : 'error'}}" placeholder="Username" id="username-camera-1" type="text">
+      <p class="error-message {{leftCameraInput.usernameValid === true ? '' : 'active'}}" data-target="username-camera-1">Ungültiger Username</p>
+
+    </div>
+    <div class="login-input-wrapper">
+      <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+      <input (change)="validateTextInput(0, 0)" [(ngModel)]="leftCameraInput.password" name="passwordLeft" class="{{leftCameraInput.passwordValid === true ? '' : 'error'}}" placeholder="Password" id="password-camera-1" type="password">
+      <p class="error-message {{leftCameraInput.passwordValid === true ? '' : 'active'}}" data-target="username-camera-1">Ungültiges Passwort</p>
+    </div>
+    <p class="login-error-message {{leftCameraloginErrorStatus !== 0 ? 'active' : ''}}"> {{loginErrorMessages[leftCameraloginErrorStatus]}}</p>
+  </div>
+  <div class="camera-login-box" id="camera-2-login">
+    <h2>Right Camera</h2>
+    <div class="login-input-wrapper">
+      <i class="fa fa-wifi" aria-hidden="true"></i>
+      <input (change)="validateIPAdress(1)" required [(ngModel)]="rightCameraInput.ipAddress" name="ipAddressRight" class="{{rightCameraInput.ipAddressValid === true ? '' : 'error'}}" placeholder="IP Adress" id="ip-camera-2" type="text">
+      <p class="error-message {{rightCameraInput.ipAddressValid === true ? '' : 'active'}}" data-target="ip-camera-2">Ungültige IP-Adresse</p>
+    </div>
+    <div class="login-input-wrapper">
+      <i class="fa fa-user" aria-hidden="true"></i>
+      <input (change)="validateTextInput(1, 0)" [(ngModel)]="rightCameraInput.username" name="username.Right" class="{{rightCameraInput.usernameValid === true ? '' : 'error'}}" placeholder="Username" id="username-camera-2" type="text">
+      <p class="error-message {{rightCameraInput.usernameValid === true ? '' : 'active'}}" data-target="username-camera-1">Ungültiger Username</p>
+    </div>
+    <div class="login-input-wrapper">
+      <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+      <input (change)="validateTextInput(1, 1)" [(ngModel)]="rightCameraInput.password" name="passwordRight" class="{{rightCameraInput.passwordValid === true ? '' : 'error'}}" placeholder="Password" id="password-camera-2" type="password">
+      <p class="error-message {{rightCameraInput.passwordValid === true ? '' : 'active'}}" data-target="username-camera-1">Ungültiges Passwort</p>
+    </div>
+    <p class="login-error-message {{rightCameraloginErrorStatus !== 0 ? 'active' : ''}}"> {{loginErrorMessages[rightCameraloginErrorStatus]}}</p>
+  </div>
 </div>
+<button (click)="handleLogin()" type="button" class="btn col-md-8 col-md-offset-2 login-submit " href="#mainCarousel" data-slide="next">Login</button>

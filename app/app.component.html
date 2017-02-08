@@ -1,22 +1,27 @@
-<camera [name]="'left'"></camera>
+<div class="carousel-inner">
 
-<div class="col-sm-12">
-    <login></login>
-</div>
+    <div class="login item {{myLoginService.isLoggedIn() === true ? '' : 'active'}}">
+        <video playsinline autoplay muted loop id="bgvid-login">
+            <source src="./app/videos/Bokeh-Tov.webm" type="video/webm">
+            <source src="./app/videos/Bokeh-Tov.mp4" type="video/mp4">
+        </video>
 
-<div *ngIf="myLoginService.isLoggedIn()" class="col-sm-12">
-    <div class="well well-sm">
-        <button (click)="myAppService.ToggleMirror()">Mirror</button>
-        <span>{{myAppService.IsMirrored()}}</span>
+        <div class="container login-container">
+            <div class="row">
+                <h1 class="col-md-8 col-md-offset-2">Stereo | <span>Remote</span></h1>
+                <login-form></login-form>
+            </div>
+        </div>
     </div>
-</div>
+
+    <!---------------------------------  MAIN PAGE   -------------------------->
+    <div *ngIf="myLoginService.isLoggedIn()"
+         class="main-page item {{myLoginService.isLoggedIn() === true ? 'active' : ''}}">
 
 
-<!--<div class="carousel-inner">
-    <div class="main-page item active">
         <video playsinline autoplay muted loop id="bgvid-control">
-            <source src="app/videos/Bokeh-Tov.webm" type="video/webm">
-            <source src="app/videos/Bokeh-Tov.mp4" type="video/mp4">
+            <source src="./app/videos/Bokeh-Tov.webm" type="video/webm">
+            <source src="./app/videos/Bokeh-Tov.mp4" type="video/mp4">
         </video>
 
         <div class="topbar navbar navbar-inverse">
@@ -27,8 +32,7 @@
 
 
         <div class="row content">
-
-            <div class="left-column settings-column col-md-2">
+            <div class="left-column settings-column col-md-2 ">
                 <camera [name]="'left'"></camera>
             </div>
 
@@ -36,24 +40,12 @@
                 <div class="settings-top-bar">
                     <div id="sync-mode-wrapper">
                         <span class="buttons-label">Sync Mode:</span>
-                        <div id="sync-mode-buttons" class="btn-group" role="group" aria-label="...">
-                            <button id="sync-mode-button-sync" type="button" class="btn btn-default active">Sync <i
-                                    class="fa fa-link"
-                                    aria-hidden="true"></i>
-                            </button>
-                            <button id="sync-mode-button-solo" type="button" class="btn btn-default">Solo <i
-                                    class="fa fa-chain-broken" aria-hidden="true"></i></button>
-                        </div>
-                    </div>
-
-                    <div id="display-mode-wrapper">
-                        <span class="buttons-label">Display Mode:</span>
-                        <div id="display-mode-buttons" class="btn-group" role="group" aria-label="...">
-                            <button id="display-mode-button-split" type="button" class="btn btn-default active">Split <i
-                                    class="fa fa-columns" aria-hidden="true"></i></button>
-                            <button id="display-mode-button-overlay" type="button" class="btn btn-default">Overlay <i
-                                    class="fa fa-window-maximize" aria-hidden="true"></i></button>
-                        </div>
+                        <p-toggleButton onLabel="Solo"
+                                        offLabel="Sync"
+                                        onIcon="fa-chain-broken"
+                                        offIcon="fa-link"
+                                        (onChange)="this.myAppService.ToggleMirror()">
+                        </p-toggleButton>
                     </div>
 
                 </div>
@@ -62,106 +54,69 @@
                         <img src="app/images/stereo-test-image.png">
                     </div>
                     <div id="live-view-image-right" class="live-view-image">
-                        <img src="app/images/stereo-test-image.png">
                     </div>
                 </div>
                 <div class="settings-bottom-bar">
                     <div class="bottom-left">
                         <div id="start-record-left-wrapper">
                             <span class="buttons-label">Aufnahme:</span>
-                            <div id="start-record-left-buttons" class="btn-group" role="group" aria-label="...">
-                                <button id="start-record-left-button-start" type="button"
-                                        class="btn btn-default active">Start <i
-                                        class="fa fa-play" aria-hidden="true"></i></button>
-                                <button id="start-record-left-stop" type="button" class="btn btn-default">Stop <i
-                                        class="fa fa-stop"
-                                        aria-hidden="true"></i>
-                                </button>
+                            <div id="start-record-left-buttons" class="record-buttons btn-group" role="group"
+                                 aria-label="...">
+                                <div *ngFor="let prop of adjProps">
+                                    <template [ngIf]="prop.type == 'toggle' && prop.desc == 'Record'">
+                                        <toggle [prop]="prop" (propChangeRequested)="changeProperty($event)"></toggle>
+                                    </template>
+                                </div>
                             </div>
                         </div>
 
                         <div id="start-live-view-left-wrapper">
                             <span class="buttons-label">Live View:</span>
-                            <div id="start-live-view-left-buttons" class="btn-group" role="group" aria-label="...">
-                                <button id="start-live-view-left-button-on" type="button"
-                                        class="btn btn-default active">On <i
-                                        class="fa fa-check" aria-hidden="true"></i></button>
-                                <button id="start-live-view-left-button-off" type="button" class="btn btn-default">Off
-                                    <i
-                                            class="fa fa-ban" aria-hidden="true"></i></button>
+                            <div id="start-live-view-left-buttons" class="live-view-buttons btn-group" role="group"
+                                 aria-label="...">
+                                <div *ngFor="let prop of adjProps">
+                                    <template [ngIf]="prop.type == 'lv-toggle' && prop.desc == 'Liveview'">
+                                        <toggle [prop]="prop" (propChangeRequested)="changeProperty($event)"></toggle>
+                                    </template>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="bottom-right">
-                        <div id="start-record-right-wrapper">
-                            <span class="buttons-label">Aufnahme:</span>
-                            <div id="start-record-right-buttons" class="btn-group" role="group" aria-label="...">
-                                <button id="start-record-right-button-start" type="button"
-                                        class="btn btn-default active">Start <i
-                                        class="fa fa-play" aria-hidden="true"></i></button>
-                                <button id="start-record-right-stop" type="button" class="btn btn-default">Stop <i
-                                        class="fa fa-stop"
-                                        aria-hidden="true"></i>
-                                </button>
-                            </div>
-                        </div>
 
-                        <div id="start-live-view-right-wrapper">
-                            <span class="buttons-label">Live View:</span>
-                            <div id="start-live-view-right-buttons" class="btn-group" role="group" aria-label="...">
-                                <button id="start-live-view-right-button-on" type="button"
-                                        class="btn btn-default active">On <i
-                                        class="fa fa-check" aria-hidden="true"></i></button>
-                                <button id="start-live-view-right-button-off" type="button" class="btn btn-default">Off
-                                    <i
-                                            class="fa fa-ban" aria-hidden="true"></i></button>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <div id="info-text">
                     <h3>Info-Text</h3>
                     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et
-                    dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-                    rebum. Stet
-                    clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-                    amet,
-                    consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat,
-                    sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-                    gubergren, no sea
-                    takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-                    elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At
-                    vero eos et
-                    accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
-                    Lorem ipsum
-                    dolor sit amet.
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
                     <br><br>
                     Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et
-                    dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
-                    rebum. Stet
-                    clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit
-                    amet,
-                    consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna
-                    aliquyam erat,
-                    sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd
-                    gubergren, no sea
-                    takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing
-                    elitr, sed
-                    diam nonumy eirmod tempor invidunt ut labore et.
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
+                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
+                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
+                    labore et.
                 </div>
             </div>
 
-
-            <div class="right-column settings-column col-md-2">
+            <div class="right-column settings-column col-md-2 ">
                 <camera [name]="'right'"></camera>
             </div>
         </div>
     </div>
-</div>-->
+
+
+</div>
 
 
 <div class="col-sm-12">

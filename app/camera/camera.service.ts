@@ -4,9 +4,13 @@ import {ipcRenderer} from 'electron';
 import {LoginService} from "../login/login.service";
 import {AppService} from "../app.service";
 import {Model} from "./c300.model";
+import {Observable, Subscription} from "rxjs/Rx";
 
 @Injectable()
 export class CameraService {
+
+    private timer: any;
+    private sub: any;
 
     private model = {"left": new Model(), "right": new Model()};
     private log: string;
@@ -32,6 +36,19 @@ export class CameraService {
                 this.log = args;
             });
         });
+
+    }
+
+    private startTimer() {
+
+        this.timer = Observable.timer(1000, 70)
+        this.sub = this.timer.subscribe(t => this.updateLiveView(t));
+
+    }
+
+    private updateLiveView(tick: any) {
+
+        //Function goes here.
 
     }
 
@@ -87,6 +104,7 @@ export class CameraService {
         }
 
         console.log(`[Parsed Response] key: ${key}, value: ${value}`);
+        console.log(this.model[cam_name].currentProperties);
     }
 
 }

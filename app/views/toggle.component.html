@@ -1,10 +1,17 @@
-<h2>{{prop.desc}}</h2>
-<div>
-    <p-toggleButton onLabel="Stop"
-                    offLabel="Start"
-                    onIcon="fa-stop"
-                    offIcon="fa-play"
-                    [(ngModel)]="checked"
-                    (onChange)="sendPropertyChangeRequest()">
-    </p-toggleButton>
+<div class="settings-wrapper">
+    <div class="settings-header-wrapper">
+        <h3>{{prop.desc}} <i class="fa fa-check-circle" aria-hidden="true"></i></h3>
+    </div>
+
+    <div class="settings-content toggle">
+        <p-toggleButton onLabel="Stop"
+                        offLabel="Start"
+                        onIcon="fa-stop"
+                        offIcon="fa-play"
+                        [(ngModel)]="checked"
+                        (onChange)="sendPropertyChangeRequest()">
+        </p-toggleButton>
+    </div>
 </div>
+
+

@@ -18,7 +18,7 @@ export class Model {
         "Ocf": {"sel": "n", "artime": -1, "brtime": -1},
         "Owbm": {"pv": "Daylight", "en": 1},
         "Owbv": {"pv": "-1", "en": 1},
-        "Oav": {"pv": "8", "en": 1},
+        "Oav": {"pv": "3.5", "en": 1},
         "Ossm": {"pv": "speed", "en": 1},
         "Ossv": {"pv": "1/60", "en": 1},
         "Ogcm": {"pv": "iso", "en": 1},
@@ -129,6 +129,7 @@ export class Model {
                 ],
                 [
                     {"key": "ssm", "value": "off", "name": "Off"},
+                    {"key": "ssv", "value": []}
                 ],
             ]
         },
@@ -193,10 +194,12 @@ export class Model {
                     {"key": "wbv", "value": {"min": -9, "max": 9, "step": 1}}
                 ],
                 [
-                    {"key": "wbm", "value": "PresetA", "name": "A"}
+                    {"key": "wbm", "value": "PresetA", "name": "A"},
+                    {"key": "wbv", "value": []}
                 ],
                 [
-                    {"key": "wbm", "value": "PresetB", "name": "B"}
+                    {"key": "wbm", "value": "PresetB", "name": "B"},
+                    {"key": "wbv", "value": []}
                 ],
                 [
                     {"key": "wbm", "value": "Kelvin", "name": "Kelvin"},

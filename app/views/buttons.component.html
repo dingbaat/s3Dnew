@@ -1,21 +1,20 @@
-<h2>{{prop.desc}}</h2>
-<div>
+<div class="settings-wrapper">
+    <div class="settings-header-wrapper">
+        <h3>{{prop.desc}} <i class="fa fa-check-circle" aria-hidden="true"></i></h3>
+    </div>
 
-    <template ngFor let-query="$implicit" [ngForOf]="prop.queries" let-i="index">
-
+    <div class="settings-content buttons">
+        <template ngFor let-query="$implicit" [ngForOf]="prop.queries" let-i="index">
         <span [ngSwitch]="query.name">
-
-            <button *ngSwitchCase="'+'" pButton type="button" icon="fa-plus"
+            <button *ngSwitchCase="'+'" pButton type="button" class="plus-minus-button" icon="fa-plus"
                     (click)="sendPropertyChangeRequest(i)"></button>
-
-            <button *ngSwitchCase="'-'" pButton type="button" icon="fa-minus"
+            <button *ngSwitchCase="'-'" pButton type="button" class="plus-minus-button" icon="fa-minus"
                     (click)="sendPropertyChangeRequest(i)"></button>
-
-            <button *ngSwitchDefault pButton type="button" label={{query.name}}
+            <button *ngSwitchDefault pButton type="button" class="single-button" label={{query.name}}
                     (click)="sendPropertyChangeRequest(i)"></button>
-
         </span>
+        </template>
 
-    </template>
-
+    </div>
 </div>
+

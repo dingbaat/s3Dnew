@@ -1,4 +1,5 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Input, Output, EventEmitter, NgZone} from "@angular/core";
+import {AppService} from "../app.service";
 
 @Component({
     moduleId: module.id,
@@ -9,21 +10,31 @@ import {Component, Input, Output, EventEmitter} from "@angular/core";
 
 export class SliderComponent {
 
+    private myAppService: AppService;
+    private zone: NgZone;
+
     @Input()
     prop: any;
 
     @Output()
-    propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
+    propChangeRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
+
+    @Output()
+    propResetRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
 
     values: any;
 
     @Input()
     selectedValue: any;
-
     prevSelectedValue: any;
 
+    @Input()
+    valueState: any;
 
-    constructor() {
+
+    constructor(private appService: AppService, zone: NgZone) {
+        this.myAppService = appService;
+        this.zone = zone;
         this.values = [];
     }
 
@@ -46,11 +57,7 @@ export class SliderComponent {
             }
         }
 
-        //TODO Set initial value to currentCameraProperties
-        //this.selectedValue = values[0].value;
-        //this.prevSelectedValue = values[0].value;
         this.prevSelectedValue = this.selectedValue;
-
     }
 
     onValueChange() {
@@ -67,10 +74,14 @@ export class SliderComponent {
         var currIndex = this.getIndexOfSelectedValue();
         var targetIndex = currIndex == this.values.length - 1 ? currIndex : currIndex + 1;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Incrementing value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue);
+            }
         }
     }
 
@@ -79,10 +90,14 @@ export class SliderComponent {
         var currIndex = this.getIndexOfSelectedValue();
         var targetIndex = currIndex == 0 ? currIndex : currIndex - 1;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Decrementing value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue);
+            }
         }
     }
 
@@ -91,10 +106,14 @@ export class SliderComponent {
         var currIndex = this.getIndexOfSelectedValue();
         var targetIndex = 0;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Going to first value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue);
+            }
         }
     }
 
@@ -103,10 +122,14 @@ export class SliderComponent {
         var currIndex = this.getIndexOfSelectedValue();
         var targetIndex = this.values.length - 1;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Going to last value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue);
+            }
         }
     }
 
@@ -117,11 +140,17 @@ export class SliderComponent {
                 return _i
             }
         }
+        return NaN;
+    }
+
+    sendPropResetRequest() {
+
+        this.propResetRequested.emit([this.prop.desc]);
     }
 
     sendPropertyChangeRequest(request: any) {
 
-        this.propChangeRequested.emit(`${this.prop.path}?${request.key}=${request.value}`);
+        this.propChangeRequested.emit([`${this.prop.path}?${request.key}=${request.value}`, this.prop.desc]);
     }
 
 }

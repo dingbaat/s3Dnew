@@ -1,11 +1,11 @@
 module.exports = function(config) {
 
-  var appBase    = 'app/';      // transpiled app JS and map files
+  var appBase    = 'app/';      // transpiled app JS and mapDescToCurrProp files
   var appSrcBase = 'app/';      // app source TS files
   var appAssets  = 'base/app/'; // component assets fetched by Angular's compiler
 
   // Testing helpers (optional) are conventionally in a folder called `testing`
-  var testingBase    = 'testing/'; // transpiled test JS and map files
+  var testingBase    = 'testing/'; // transpiled test JS and mapDescToCurrProp files
   var testingSrcBase = 'testing/'; // test source TS files
 
   config.set({
@@ -51,12 +51,12 @@ module.exports = function(config) {
 
       // RxJs
       { pattern: 'node_modules/rxjs/**/*.js', included: false, watched: false },
-      { pattern: 'node_modules/rxjs/**/*.js.map', included: false, watched: false },
+      { pattern: 'node_modules/rxjs/**/*.js.mapDescToCurrProp', included: false, watched: false },
 
       // Paths loaded via module imports:
       // Angular itself
       { pattern: 'node_modules/@angular/**/*.js', included: false, watched: false },
-      { pattern: 'node_modules/@angular/**/*.js.map', included: false, watched: false },
+      { pattern: 'node_modules/@angular/**/*.js.mapDescToCurrProp', included: false, watched: false },
 
       { pattern: 'systemjs.config.js', included: false, watched: false },
       { pattern: 'systemjs.config.extras.js', included: false, watched: false },
@@ -74,9 +74,9 @@ module.exports = function(config) {
 
       // Paths for debugging with source maps in dev tools
       { pattern: appSrcBase + '**/*.ts', included: false, watched: false },
-      { pattern: appBase + '**/*.js.map', included: false, watched: false },
+      { pattern: appBase + '**/*.js.mapDescToCurrProp', included: false, watched: false },
       { pattern: testingSrcBase + '**/*.ts', included: false, watched: false },
-      { pattern: testingBase + '**/*.js.map', included: false, watched: false}
+      { pattern: testingBase + '**/*.js.mapDescToCurrProp', included: false, watched: false}
     ],
 
     // Proxied base paths for loading assets

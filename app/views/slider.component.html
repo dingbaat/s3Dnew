@@ -1,13 +1,26 @@
 <div class="settings-wrapper">
     <div class="settings-header-wrapper">
-        <h3>{{prop.desc}} <i class="fa fa-check-circle" aria-hidden="true"></i></h3>
+        <h3>{{prop.desc}}
+            <i class="fa fa-check-circle success" aria-hidden="true" *ngIf="valueState=='success'"
+               title="All values synchronized">
+            </i>
+            <i class="fa fa-question-circle waiting" aria-hidden="true" *ngIf="valueState=='waiting'"
+               title="Waiting for camera response">
+            </i>
+            <i class="fa fa-times-circle fail" aria-hidden="true" *ngIf="valueState=='fail'"
+               title="Synchronization failed: Click to show last synchronized value" (click)="sendPropResetRequest()">
+            </i>
+        </h3>
     </div>
 
     <div class="settings-content slider">
         <button class="slider-backward" pButton type="button" icon="fa-backward" (click)="onFirstValue()"></button>
-        <button class="slider-step-backward" pButton type="button" icon="fa-step-backward" (click)="onDecrementValue()"></button>
-        <p-dropdown class="dropdown" [options]="values" [(ngModel)]="selectedValue" (onChange)="onValueChange()"></p-dropdown>
-        <button class="slider-step-forward" pButton type="button" icon="fa-step-forward" (click)="onIncrementValue()"></button>
+        <button class="slider-step-backward" pButton type="button" icon="fa-step-backward"
+                (click)="onDecrementValue()"></button>
+        <p-dropdown class="dropdown" [options]="values" [(ngModel)]="selectedValue"
+                    (onChange)="onValueChange()"></p-dropdown>
+        <button class="slider-step-forward" pButton type="button" icon="fa-step-forward"
+                (click)="onIncrementValue()"></button>
         <button class="slider-forward" pButton type="button" icon="fa-forward" (click)="onLastValue()"></button>
     </div>
 </div>

@@ -19,6 +19,7 @@ export class AppComponent {
     private myLoginService: LoginService;
     private myCameraService: CameraService;
 
+
     constructor(private appService: AppService, private loginService: LoginService, private cameraService: CameraService) {
         this.myAppService = appService;
         this.myLoginService = loginService;

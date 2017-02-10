@@ -12,8 +12,17 @@ export class ToggleComponent {
     @Input()
     prop: any;
 
+    @Input()
+    selectedValue: any;
+
+    @Input()
+    valueState: any;
+
     @Output()
-    propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
+    propChangeRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
+
+    @Output()
+    propResetRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
 
     checked: boolean;
 
@@ -39,7 +48,12 @@ export class ToggleComponent {
             }
         }
 
-        this.propChangeRequested.emit(`${this.prop.path}?${key}=${value}`);
+        this.propChangeRequested.emit([`${this.prop.path}?${key}=${value}`, this.prop.desc]);
+    }
+
+    sendPropResetRequest() {
+
+        this.propResetRequested.emit([this.prop.desc]);
     }
 
 }

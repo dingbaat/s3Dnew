@@ -1,4 +1,5 @@
 import {Component, Input, Output, EventEmitter, Type} from "@angular/core";
+import {AppService} from "../app.service";
 
 @Component({
     moduleId: module.id,
@@ -9,24 +10,36 @@ import {Component, Input, Output, EventEmitter, Type} from "@angular/core";
 
 export class DropdownSliderComponent {
 
+    private myAppService: AppService;
+
     @Input()
     prop: any;
 
     @Output()
-    propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
+    propChangeRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
+
+    @Output()
+    propResetRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
 
     modes: any;
     @Input()
     selectedMode: any;
     prevSelectedMode: any;
 
+    @Input()
+    modeState: any;
+
     values: any;
     @Input()
     selectedValue: any;
     prevSelectedValue: any;
 
+    @Input()
+    valueState: any;
 
-    constructor() {
+
+    constructor(private appService: AppService) {
+        this.myAppService = appService;
         this.modes = [];
         this.values = [];
     }
@@ -72,7 +85,7 @@ export class DropdownSliderComponent {
     onModeChange() {
 
         if (this.selectedMode != this.prevSelectedMode) {
-            this.sendPropertyChangeRequest(this.selectedMode);
+            this.sendPropertyChangeRequest(this.selectedMode, 'Mode');
         }
 
         this.prevSelectedMode = this.selectedMode;
@@ -81,7 +94,7 @@ export class DropdownSliderComponent {
     onValueChange(index: number) {
 
         if (this.selectedValue != this.prevSelectedValue) {
-            this.sendPropertyChangeRequest(this.selectedValue);
+            this.sendPropertyChangeRequest(this.selectedValue, 'Value');
         }
 
         this.prevSelectedValue = this.selectedValue;
@@ -92,10 +105,14 @@ export class DropdownSliderComponent {
         var currIndex = this.getIndexOfValue(index);
         var targetIndex = currIndex == this.values[index].length - 1 ? currIndex : currIndex + 1;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[index][targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Incrementing value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[index][targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue, 'Value');
+            }
         }
     }
 
@@ -104,10 +121,14 @@ export class DropdownSliderComponent {
         var currIndex = this.getIndexOfValue(index);
         var targetIndex = currIndex == 0 ? currIndex : currIndex - 1;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[index][targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Decrementing value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[index][targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue, 'Value');
+            }
         }
     }
 
@@ -116,10 +137,14 @@ export class DropdownSliderComponent {
         var currIndex = this.getIndexOfValue(index);
         var targetIndex = 0;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[index][targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Going to first value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[index][targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue, 'Value');
+            }
         }
     }
 
@@ -128,10 +153,14 @@ export class DropdownSliderComponent {
         var currIndex = this.getIndexOfValue(index);
         var targetIndex = this.values[index].length - 1;
 
-        if (currIndex != targetIndex) {
-            this.selectedValue = this.values[index][targetIndex].value;
-            this.prevSelectedValue = this.selectedValue;
-            this.sendPropertyChangeRequest(this.selectedValue);
+        if (isNaN(currIndex)) {
+            this.myAppService.showGrowl('error', 'An internal error occured', 'Going to last value failed');
+        } else {
+            if (currIndex != targetIndex) {
+                this.selectedValue = this.values[index][targetIndex].value;
+                this.prevSelectedValue = this.selectedValue;
+                this.sendPropertyChangeRequest(this.selectedValue, 'Value');
+            }
         }
     }
 
@@ -142,11 +171,17 @@ export class DropdownSliderComponent {
                 return _i
             }
         }
+        return NaN;
     }
 
-    sendPropertyChangeRequest(request: any) {
+    sendPropertyChangeRequest(request: any, type: string) {
 
-        this.propChangeRequested.emit(`${this.prop.path}?${request.key}=${request.value}`);
+        this.propChangeRequested.emit([`${this.prop.path}?${request.key}=${request.value}`, `${this.prop.desc}-${type}`]);
+    }
+
+    sendPropResetRequest() {
+
+        this.propResetRequested.emit([this.prop.desc + "-Mode", this.prop.desc + "-Value"]);
     }
 
 }

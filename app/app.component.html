@@ -1,3 +1,5 @@
+<p-growl [life]="2000" [value]="this.myAppService.getGrowls()"></p-growl>
+
 <div class="carousel-inner">
 
     <div class="login item {{myLoginService.isLoggedIn() === true ? '' : 'active'}}">
@@ -44,7 +46,7 @@
                                         offLabel="Sync"
                                         onIcon="fa-chain-broken"
                                         offIcon="fa-link"
-                                        (onChange)="this.myAppService.ToggleMirror()">
+                                        (onChange)="this.myAppService.ToggleMirror();this.myCameraService.mirrorProperties()">
                         </p-toggleButton>
                     </div>
 
@@ -116,9 +118,4 @@
     </div>
 
 
-</div>
-
-
-<div class="col-sm-12">
-    <div id="log" class="well well-sm">{{myCameraService.getLog()}}</div>
 </div>

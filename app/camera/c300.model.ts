@@ -1,33 +1,78 @@
+export const mirrorProps = [
+    "rec",
+    "nd",
+    "pushai",
+    "Owbm",
+    "Owbv",
+    "Oav",
+    "Ossm",
+    "Ossv",
+    "Ogcm",
+    "Ogcv"
+];
+
+export const mapCurrPropToDesc = {
+    "Oav": "Aperture",
+    "Ossm": "Shutterspeed-Mode",
+    "Ossv": "Shutterspeed-Value",
+    "nd": "ND",
+    "Ogcm": "ISO/Gain-Mode",
+    "Ogcv": "ISO/Gain-Value",
+    "Owbm": "Whitebalance-Mode",
+    "Owbv": "Whitebalance-Value",
+    "pushai": "Autoiris",
+    "rec": "Record"
+};
+
+export const mapDescToCurrProp = {
+    "Iris": "blank",
+    "Aperture": "Oav",
+    "Shutterspeed-Mode": "Ossm",
+    "Shutterspeed-Value": "Ossv",
+    "ND": "nd",
+    "ISO/Gain-Mode": "Ogcm",
+    "ISO/Gain-Value": "Ogcv",
+    "Whitebalance-Mode": "Owbm",
+    "Whitebalance-Value": "Owbv",
+    "Slot": "blank",
+    "Autoiris": "pushai",
+    "Record": "rec",
+    "Liveview": "blank",
+    "Liveview-Image": "blank"
+};
+
 export class Model {
 
     generalProperties = {
         "pathWftServer": "/api/cam/",
         "protocolWftServer": "http",
-        "queryPropState": "getprop?r="
+        "queryPropState": "getprop?r=",
+        "queryAllPropsStates": "getcurprop?seq=0",
     }
 
     currentProperties = {
-        "seq": 2,
-        "mode": "Ctrl",
-        "rec": "off",
-        "com": 6,
-        "batt": 1,
-        "tc": "00:00:00:00",
-        "cbtn": "f0i1af0ai1",
-        "camid": "Links   ",
-        "Ocf": {"sel": "n", "artime": -1, "brtime": -1},
-        "Owbm": {"pv": "Daylight", "en": 1},
-        "Owbv": {"pv": "-1", "en": 1},
-        "Oav": {"pv": "3.5", "en": 1},
-        "Ossm": {"pv": "speed", "en": 1},
-        "Ossv": {"pv": "1/60", "en": 1},
-        "Ogcm": {"pv": "iso", "en": 1},
-        "Ogcv": {"pv": "800", "en": 1},
-        "nd": 0,
-        "mcbtn": "enAct",
-        "fframe": "off",
-        "pushai": "stop",
-        "exdisp": 0
+        "blank": {"val": "", "state": ""},
+        "seq": {"val": 2, "state": "success"},
+        "mode": {"val": "Ctrl", "state": "success"},
+        "rec": {"val": "off", "state": "success"},
+        "com": {"val": 6, "state": "success"},
+        "batt": {"val": 1, "state": "success"},
+        "tc": {"val": "00:00:00:00", "state": "success"},
+        "cbtn": {"val": "f0i1af0ai1", "state": "success"},
+        "camid": {"val": "Links", "state": "success"},
+        "Ocf": {"sel": "n", "artime": -1, "brtime": -1, "state": "success"},
+        "Owbm": {"pv": "Daylight", "en": 1, "state": "success"},
+        "Owbv": {"pv": "-1", "en": 1, "state": "success"},
+        "Oav": {"pv": "3.5", "en": 1, "state": "success"},
+        "Ossm": {"pv": "speed", "en": 1, "state": "success"},
+        "Ossv": {"pv": "1/60", "en": 1, "state": "success"},
+        "Ogcm": {"pv": "iso", "en": 1, "state": "success"},
+        "Ogcv": {"pv": "800", "en": 1, "state": "success"},
+        "nd": {"val": 0, "state": "success"},
+        "mcbtn": {"val": "enAct", "state": "success"},
+        "fframe": {"val": "off", "state": "success"},
+        "pushai": {"val": "stop", "state": "success"},
+        "exdisp": {"val": 0, "state": "success"}
     }
 
     adjustableProperties = [
@@ -245,7 +290,7 @@ export class Model {
             ]
         },
         {
-            "desc": "Liveview Image",
+            "desc": "Liveview-Image",
             "type": "lv-image",
             "path": "lvgetimg",
             "queries": [

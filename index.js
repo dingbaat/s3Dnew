@@ -9,6 +9,15 @@ const request = require('request');
 
 let mainWindow;
 
+let errorMap = {
+    "EACCES": "Permission denied",
+    "ECONNREFUSED": "Connection refused",
+    "ECONNRESET": "Connection reset by peer",
+    "ENOENT": "No such file or directory",
+    "EPERM": "Operation not permitted",
+    "ETIMEDOUT": "Operation timed out"
+};
+
 function init() {
 
     mainWindow = new BrowserWindow({width: 800, height: 600});
@@ -31,24 +40,15 @@ function init() {
         request(args, function (error, response, body) {
 
             if (error) {
-
-                switch (error.code) {
-                    case "ECONNRESET":
-                    case "ETIMEDOUT":
-                    case "ENOENT":
-                        event.sender.send("error", "Es liegt ein Netzwerkproblem vor");
-                        break;
-                    case "ECONNREFUSED":
-                        event.sender.send("error", "Keine Verbindung möglich");
-                        break;
-                    default:
-                        event.sender.send("error", JSON.stringify(error));
+                if (msg = errorMap[error.code]) {
+                    event.sender.send("error", msg, args);
+                } else {
+                    event.sender.send("error", `There is a network problem (${error.code})`, args);
                 }
-
             } else if (response.statusCode != 200) {
-                event.sender.send("error", args + " " + response.statusCode);
+                event.sender.send("error", `${response.statusCode}: ${response.statusMessage}`, args);
             } else {
-                event.sender.send("response", args + " " + response.statusCode);
+                event.sender.send("response", response, body);
             }
         })
     })

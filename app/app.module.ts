@@ -24,7 +24,8 @@ import {
     DropdownModule,
     SliderModule,
     ButtonModule,
-    ToggleButtonModule
+    ToggleButtonModule,
+    GrowlModule
 } from 'primeng/primeng';
 
 @NgModule({
@@ -44,7 +45,7 @@ import {
         BrowserModule,
         FormsModule,
         HttpModule,
-        ToggleButtonModule, DropdownModule, SliderModule, ButtonModule
+        GrowlModule, ToggleButtonModule, DropdownModule, SliderModule, ButtonModule
     ],
     providers: [
         LoginService,

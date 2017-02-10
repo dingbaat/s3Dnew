@@ -1,26 +1,49 @@
+<button (click)="test()">Test</button>
+
 <h2>{{name}} Camera</h2>
 
 <div *ngFor="let prop of adjProps">
 
     <template [ngIf]="prop.type == 'slider' ">
-        <slider [selectedValue]="{key: prop.queries[0].key, value: currProps['O'+prop.queries[0].key].pv}"
-                [prop]="prop" (propChangeRequested)="changeProperty($event)"></slider>
+        <slider
+                [prop]="prop"
+                [selectedValue]="{key: prop.queries[0].key, value: myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).pv}"
+                [valueState]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).state"
+                (propChangeRequested)="changeProperty($event)"
+                (propResetRequested)="resetProperty($event)">
+        </slider>
     </template>
 
     <template [ngIf]="prop.type == 'dropdown+slider' ">
         <dropdown_slider
-                [selectedMode]="{key: prop.queries[0][0].key, value: currProps['O'+prop.queries[0][0].key].pv}"
-                [selectedValue]="{key: prop.queries[0][1].key, value: currProps['O'+prop.queries[0][1].key].pv}"
-                [prop]="prop" (propChangeRequested)="changeProperty($event)">
+                [prop]="prop"
+                [selectedMode]="{key: prop.queries[0][0].key, value: myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc + '-Mode']).pv}"
+                [modeState]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc + '-Mode']).state"
+                [selectedValue]="{key: prop.queries[0][1].key, value: myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc + '-Value']).pv}"
+                [valueState]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc + '-Value']).state"
+                (propChangeRequested)="changeProperty($event)"
+                (propResetRequested)="resetProperty($event)">
         </dropdown_slider>
     </template>
 
-    <template [ngIf]="prop.type == 'buttons' ">
-        <buttons [prop]="prop" (propChangeRequested)="changeProperty($event)"></buttons>
+    <template [ngIf]="prop.type == 'buttons'">
+        <buttons
+                [prop]="prop"
+                [selectedValue]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).val"
+                [valueState]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).state"
+                (propChangeRequested)="changeProperty($event)"
+                (propResetRequested)="resetProperty($event)">
+        </buttons>
     </template>
 
     <template [ngIf]="prop.type == 'toggle' && prop.desc != 'Record' ">
-        <toggle [prop]="prop" (propChangeRequested)="changeProperty($event)"></toggle>
+        <toggle
+                [prop]="prop"
+                [selectedValue]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).val"
+                [valueState]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).state"
+                (propChangeRequested)="changeProperty($event)"
+                (propResetRequested)="resetProperty($event)">
+        </toggle>
     </template>
 
 </div>

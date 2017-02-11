@@ -13,13 +13,13 @@ const noLoginErrorMssg: string = "NOERROR";
 })
 export class LoginComponent {
 
-    private leftCameraReadyToLogIn: boolean;
-    private rightCameraReadyToLogIn: boolean;
     private myLoginService: LoginService;
     private zone: NgZone;
 
     public leftCameraloginErrorStatus: LoginErrorStatus;
     public rightCameraloginErrorStatus: LoginErrorStatus;
+    public leftCameraReadyToLogIn: boolean;
+    public rightCameraReadyToLogIn: boolean;
     public loginErrorMessages: string[];
     public leftCameraInput: LoginInputData;
     public rightCameraInput: LoginInputData;
@@ -65,12 +65,14 @@ export class LoginComponent {
         //TODO Later, use the camera's ip addresses
         if (valid) {
             //check the left camera's connection
-            this.checkCameraConnection(CameraInputType.left);
-            this.checkCameraConnection(CameraInputType.right);
+            //this.checkCameraConnection(CameraInputType.left);
+            //this.checkCameraConnection(CameraInputType.right);
+            this.myLoginService.checkCameraConnection(CameraInputType.left, this);
+            this.myLoginService.checkCameraConnection(CameraInputType.right, this);
         }
     }
 
-    private doLogin(cameraInputType: CameraInputType): void {
+    /*private doLogin(cameraInputType: CameraInputType): void {
         cameraInputType === CameraInputType.left ? this.leftCameraReadyToLogIn = true : this.rightCameraReadyToLogIn = true;
 
         if (this.leftCameraReadyToLogIn === true && this.rightCameraReadyToLogIn === true) {
@@ -120,9 +122,9 @@ export class LoginComponent {
                 this.doLogin(cameraInputType);
             }
         );
-    }
+    }*/
 
-    private updateLoginErrorStatus(cameraInputType: CameraInputType, errorStatus: string): void {
+    public updateLoginErrorStatus(cameraInputType: CameraInputType, errorStatus: string): void {
         switch (errorStatus) {
             case "403":
                 this.zone.run(() => {

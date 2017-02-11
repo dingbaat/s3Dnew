@@ -82,7 +82,6 @@ export class CameraService {
     }
 
     resetProperty(cam_name: string, args: string[]) {
-
         for (let item of args) {
 
             let currProp = this.model[cam_name].currentProperties[mapDescToCurrProp[item]];

@@ -1,9 +1,12 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {NetworkService} from "../utils/network.service";
 import {Http, Response} from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {Observable} from 'rxjs/Observable';
+import {LoginComponent} from "./login.component";
+
+const noLoginErrorMssg: string = "NOERROR";
 
 @Injectable()
 export class LoginService {
@@ -14,11 +17,11 @@ export class LoginService {
     private user_right: string;
     private pass_left: string;
     private pass_right: string;
-    public loggedIn: boolean = true;
+    public loggedIn: boolean = false;
 
     private myNetworkService: NetworkService;
 
-    constructor(private networkService: NetworkService, private http: Http) {
+    constructor(private networkService: NetworkService, private http: Http, private zone: NgZone) {
         this.myNetworkService = networkService;
     }
 
@@ -64,4 +67,66 @@ export class LoginService {
         return response;
     }
 
+    public checkCameraConnection(cameraInputType: CameraInputType, loginComponent: LoginComponent) {
+        //let url = cameraInputType === CameraInputType.left ? this.leftCameraInput.ipAddress : this.rightCameraInput.ipAddress;
+        let url = "http://www.google.de";
+        this.checkConnection(url).subscribe(
+            connection => {
+                console.log("finished request")
+                this.doLogin(cameraInputType, loginComponent);
+            },
+            error => {
+                loginComponent.updateLoginErrorStatus(cameraInputType, String(error.status));
+                this.doLogin(cameraInputType, loginComponent);
+            }
+        );
+    }
+
+    private doLogin(cameraInputType: CameraInputType, loginComponent:LoginComponent): void {
+        cameraInputType === CameraInputType.left ? loginComponent.leftCameraReadyToLogIn = true : loginComponent.rightCameraReadyToLogIn = true;
+
+        if (loginComponent.leftCameraReadyToLogIn === true && loginComponent.rightCameraReadyToLogIn === true) {
+            if (loginComponent.leftCameraloginErrorStatus == LoginErrorStatus.none && loginComponent.rightCameraloginErrorStatus == LoginErrorStatus.none) {
+                loginComponent.updateLoginErrorStatus(CameraInputType.left, noLoginErrorMssg);
+                loginComponent.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
+
+                //update the stereo-app-component with the valid login credentials for both cameras
+                this.ip_left = loginComponent.leftCameraInput.ipAddress;
+                this.user_left = loginComponent.leftCameraInput.username;
+                this.pass_left = loginComponent.leftCameraInput.password;
+                this.ip_right = loginComponent.rightCameraInput.ipAddress;
+                this.user_right = loginComponent.rightCameraInput.username;
+                this.pass_right = loginComponent.rightCameraInput.password;
+
+
+                this.zone.run(() => {
+                    this.loggedIn = true;
+                });
+
+                console.log(this.loggedIn)
+                console.log("Login successful!");
+            }
+            else {
+                loginComponent.leftCameraReadyToLogIn = false;
+                loginComponent.rightCameraReadyToLogIn = false;
+
+                this.zone.run(() => {
+                    this.loggedIn = false;
+                });
+                console.log("Login failed!");
+            }
+        }
+    }
+}
+
+enum CameraInputType {
+    left,
+    right,
+}
+
+enum LoginErrorStatus {
+    none,
+    forbidden,
+    unreachable,
+    genericError,
 }

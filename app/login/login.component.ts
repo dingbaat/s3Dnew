@@ -15,6 +15,7 @@ export class LoginComponent {
 
     private myLoginService: LoginService;
     private zone: NgZone;
+    private masterCamera: string = "left";
 
     public leftCameraloginErrorStatus: LoginErrorStatus;
     public rightCameraloginErrorStatus: LoginErrorStatus;
@@ -45,7 +46,7 @@ export class LoginComponent {
             password: '',
             passwordValid: true,
             ipAddress: '1.2.3.4',
-            ipAddressValid: true,
+            ipAddressValid: true
         }
         this.rightCameraInput = {
             username: '',
@@ -53,7 +54,7 @@ export class LoginComponent {
             password: '',
             passwordValid: true,
             ipAddress: '5.6.7.8',
-            ipAddressValid: true,
+            ipAddressValid: true
         }
     }
 
@@ -186,6 +187,9 @@ export class LoginComponent {
             textInputType === TextInputType.password ? this.rightCameraInput.passwordValid = valid : this.rightCameraInput.usernameValid = valid
     }
 
+    public getMasterCamera() {
+        return this.masterCamera;
+    }
 }
 
 interface LoginInputData {

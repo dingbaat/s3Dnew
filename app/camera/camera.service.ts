@@ -20,6 +20,7 @@ export class CameraService {
 
 
     constructor(private loginService: LoginService, private appService: AppService, zone: NgZone) {
+
         this.myLoginService = loginService;
         this.myAppService = appService;
         this.zone = zone;

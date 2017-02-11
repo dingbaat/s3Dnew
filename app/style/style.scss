@@ -258,6 +258,13 @@ div.login {
   background: $primaryColorLight;
   height:100%;
 
+  .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
+    top:-0.3em !important;
+  }
+  .ui-radiobutton .ui-radiobutton-box {
+    margin-top:-4px !important;
+  }
+
   video#bgvid-login {
     @include bg-video-defaults();
   }
@@ -303,7 +310,7 @@ div.login {
       text-align: center;
       padding:0;
       min-height: 400px;
-      max-height:600px;
+      height:400px;
       background: $textDark;
 
       .camera-login-box {
@@ -717,6 +724,10 @@ div.main-page {
     }
 
   }
+}
 
-
+@media (max-width:992px) {
+  .login-submit {
+    width:100% !important;
+  }
 }

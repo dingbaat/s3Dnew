@@ -11,6 +11,8 @@ const noLoginErrorMssg: string = "NOERROR";
 @Injectable()
 export class LoginService {
 
+
+    private master_camera = "";
     private ip_left: string;
     private ip_right: string;
     private user_left: string;
@@ -67,6 +69,26 @@ export class LoginService {
         return response;
     }
 
+    public getCamNameByIp(ip:string) {
+        if(ip.includes(this.ip_left))
+            return "left";
+        else if(ip.includes(this.ip_right))
+            return "right";
+        else
+            return null;
+    }
+
+    public setMasterCamera(camera:string) {
+        if(camera != "left" && camera != "right")
+            return;
+
+        this.master_camera = camera;
+    }
+
+    public getMasterCamera(camera:string) {
+        return this.master_camera;
+    }
+
     public checkCameraConnection(cameraInputType: CameraInputType, loginComponent: LoginComponent) {
         //let url = cameraInputType === CameraInputType.left ? this.leftCameraInput.ipAddress : this.rightCameraInput.ipAddress;
         let url = "http://www.google.de";
@@ -91,6 +113,7 @@ export class LoginService {
                 loginComponent.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
 
                 //update the stereo-app-component with the valid login credentials for both cameras
+                this.master_camera = loginComponent.getMasterCamera();
                 this.ip_left = loginComponent.leftCameraInput.ipAddress;
                 this.user_left = loginComponent.leftCameraInput.username;
                 this.pass_left = loginComponent.leftCameraInput.password;
@@ -103,7 +126,6 @@ export class LoginService {
                     this.loggedIn = true;
                 });
 
-                console.log(this.loggedIn)
                 console.log("Login successful!");
             }
             else {

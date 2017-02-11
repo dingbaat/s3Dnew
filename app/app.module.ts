@@ -14,6 +14,7 @@ import {ButtonsComponent} from "./views/buttons.component";
 import {SliderComponent} from "./views/slider.component";
 import {ToggleComponent} from "./views/toggle.component";
 import {LiveviewComponent} from "./views/liveview.component";
+import {RadioButtonModule, RadioButton} from 'primeng/primeng';
 
 import {LoginService} from "./login/login.service";
 import {NetworkService} from "./utils/network.service";
@@ -39,13 +40,13 @@ import {
         ButtonsComponent,
         SliderComponent,
         ToggleComponent,
-        LiveviewComponent
+        LiveviewComponent,
     ],
     imports: [
         BrowserModule,
         FormsModule,
         HttpModule,
-        GrowlModule, ToggleButtonModule, DropdownModule, SliderModule, ButtonModule
+        GrowlModule, ToggleButtonModule, DropdownModule, SliderModule, ButtonModule, RadioButtonModule
     ],
     providers: [
         LoginService,

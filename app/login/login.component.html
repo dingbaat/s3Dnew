@@ -20,6 +20,7 @@
       <p class="error-message {{leftCameraInput.passwordValid === true ? '' : 'active'}}" data-target="username-camera-1">Ungültiges Passwort</p>
     </div>
     <p class="login-error-message {{leftCameraloginErrorStatus !== 0 ? 'active' : ''}}"> {{loginErrorMessages[leftCameraloginErrorStatus]}}</p>
+    <p-radioButton name="groupname" label="Is Master:" value="left" [(ngModel)]="masterCamera"></p-radioButton>
   </div>
   <div class="camera-login-box" id="camera-2-login">
     <h2>Right Camera</h2>
@@ -39,6 +40,7 @@
       <p class="error-message {{rightCameraInput.passwordValid === true ? '' : 'active'}}" data-target="username-camera-1">Ungültiges Passwort</p>
     </div>
     <p class="login-error-message {{rightCameraloginErrorStatus !== 0 ? 'active' : ''}}"> {{loginErrorMessages[rightCameraloginErrorStatus]}}</p>
+    <p-radioButton name="groupname" label="Is Master:" value="right" [(ngModel)]="masterCamera"></p-radioButton>
   </div>
 </div>
 <button (click)="handleLogin()" type="button" class="btn col-md-8 col-md-offset-2 login-submit " href="#mainCarousel" data-slide="next">Login</button>

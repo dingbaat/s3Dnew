@@ -5,6 +5,7 @@ import {Observable, Subscription} from "rxjs/Rx";
 import {LoginService} from "../login/login.service";
 import {AppService} from "../app.service";
 import {Model, mapDescToCurrProp, mapCurrPropToDesc, mirrorProps} from "./c300.model";
+import {setInterval} from "timers";
 
 @Injectable()
 export class CameraService {
@@ -35,7 +36,7 @@ export class CameraService {
             ip = ip.substring(0, ip.indexOf("/"));
             this.zone.run(() => {
                 this.myAppService.showGrowl("error", "Property couldn't be changed", msg);
-                this.SetWaitingPropsToFail(this.getCamNameByIp(ip));
+                this.SetWaitingPropsToFail(this.myLoginService.getCamNameByIp(ip));
             });
         });
     }
@@ -77,11 +78,6 @@ export class CameraService {
         return mapDescToCurrProp;
     }
 
-    private getCamNameByIp(ip: string): string {
-        //TODO Lookup implementieren
-        return "left";
-    }
-
     resetProperty(cam_name: string, args: string[]) {
         for (let item of args) {
 
@@ -116,6 +112,7 @@ export class CameraService {
         });
 
         //TODO uncomment for production use
+        //var id = setInterval(ipcRenderer.send("request", url), 2000);
         //ipcRenderer.send("request", url);
         //TODO comment for production use
         let testUrl = "http://webuser.hs-furtwangen.de/~hochanda/RemoteStereo/Testdaten.txt";
@@ -149,9 +146,9 @@ export class CameraService {
     }
 
     private parseResponse(host: string, path: any, body: any) {
-        console.log(`[Parse Response | ${host}${path}] ${JSON.stringify(body)}`);
+        console.log(`[Parse Response | Host: ${host}, Path: ${path}] ${JSON.stringify(body)}`);
 
-        let camName = (host != "left" && host != "right") ? this.getCamNameByIp(host) : host;
+        let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
 
         if (body["res"] != null) {
             if (body["res"] == "ok") {
@@ -223,8 +220,7 @@ export class CameraService {
 
         if (this.myAppService.IsMirrored()) {
 
-            //TODO Master dynamisch bestimmen
-            let master = 'left';
+            let master = this.myLoginService.getMasterCamera();
             let slave = master == 'left' ? 'right' : 'left';
             let query: string, value: string;
 

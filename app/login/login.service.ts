@@ -85,7 +85,7 @@ export class LoginService {
         this.master_camera = camera;
     }
 
-    public getMasterCamera(camera:string) {
+    public getMasterCamera() {
         return this.master_camera;
     }
 

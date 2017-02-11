@@ -600,3 +600,19 @@ div.main-page {
     width: 100% !important; } }
 
 /*# sourceMappingURL=style.css.map */
+.success {
+    color: #5cb85c;
+}
+
+.waiting {
+    color: orange;
+}
+
+.fail {
+    color: red;
+}
+
+.fa-times-circle {
+    cursor: pointer;
+}
+

@@ -27,8 +27,15 @@
         </video>
 
         <div class="topbar navbar navbar-inverse">
-            <div class="logo-wrapper">
-                Stereo | <span>Remote</span>
+            <div class="settings-top-bar">
+                <p-toggleButton onLabel="Solo"
+                                offLabel="Sync"
+                                onIcon="fa-chain-broken"
+                                offIcon="fa-link"
+                                (onChange)="this.myAppService.ToggleMirror();this.myCameraService.mirrorProperties()">
+                </p-toggleButton>
+                <span class="btn button" href="#"><i class="icon-align-left"></i></span>
+                <button pButton (click)="this.myCameraService.pingCameras();" type="button" icon="fa-bell-o" label="Ping Cameras"></button>
             </div>
         </div>
 
@@ -39,75 +46,19 @@
             </div>
 
             <div class="middle-column col-md-8">
-                <div class="settings-top-bar">
-                    <div id="sync-mode-wrapper">
-                        <span class="buttons-label">Sync Mode:</span>
-                        <p-toggleButton onLabel="Solo"
-                                        offLabel="Sync"
-                                        onIcon="fa-chain-broken"
-                                        offIcon="fa-link"
-                                        (onChange)="this.myAppService.ToggleMirror();this.myCameraService.mirrorProperties()">
-                        </p-toggleButton>
-                    </div>
-
-                </div>
                 <div class="live-view-wrapper">
                     <div id="live-view-image-left" class="live-view-image">
-                        <img src="app/images/stereo-test-image.png">
+                        <liveview
+                                [props]="this.myCameraService.getLiveViewProps('left')"
+                                [cameraName]="'left'">
+                        </liveview>
                     </div>
                     <div id="live-view-image-right" class="live-view-image">
+                        <liveview
+                            [props]="this.myCameraService.getLiveViewProps('left')"
+                            [cameraName]="'left'">
+                        </liveview>
                     </div>
-                </div>
-                <div class="settings-bottom-bar">
-                    <div class="bottom-left">
-                        <div id="start-record-left-wrapper">
-                            <span class="buttons-label">Aufnahme:</span>
-                            <div id="start-record-left-buttons" class="record-buttons btn-group" role="group"
-                                 aria-label="...">
-                                <div *ngFor="let prop of adjProps">
-                                    <template [ngIf]="prop.type == 'toggle' && prop.desc == 'Record'">
-                                        <toggle [prop]="prop" (propChangeRequested)="changeProperty($event)"></toggle>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div id="start-live-view-left-wrapper">
-                            <span class="buttons-label">Live View:</span>
-                            <div id="start-live-view-left-buttons" class="live-view-buttons btn-group" role="group"
-                                 aria-label="...">
-                                <div *ngFor="let prop of adjProps">
-                                    <template [ngIf]="prop.type == 'lv-toggle' && prop.desc == 'Liveview'">
-                                        <toggle [prop]="prop" (propChangeRequested)="changeProperty($event)"></toggle>
-                                    </template>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bottom-right">
-
-                    </div>
-                </div>
-                <div id="info-text">
-                    <h3>Info-Text</h3>
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                    <br><br>
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores
-                    et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.
-                    Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut
-                    labore et.
                 </div>
             </div>
 

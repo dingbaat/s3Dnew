@@ -1,13 +1,41 @@
-<h2>Liveview</h2>
 
-<img src="./app/images/stereo-test-image.png" style="width: 500px">
+<h3>Live Views:</h3>
+<div class="trans-live-view">
+    <img src="./app/images/stereo-test-image.png">
+</div>
 
-<div>
-    <p-toggleButton onLabel="Stop"
-                    offLabel="Start"
-                    onIcon="fa-stop"
-                    offIcon="fa-play"
-                    [(ngModel)]="checked"
-                    (onChange)="sendPropertyChangeRequest()">
-    </p-toggleButton>
+<div class="split-live-view">
+    <img src="./app/images/stereo-test-image.png">
+</div>
+
+
+<div class="settings-control-bar">
+    <div class="bottom-left">
+        <div *ngFor="let prop of props">
+            <template [ngIf]="prop.type == 'lv-toggle'">
+                {{prop.desc}}:
+                <toggle
+                        [prop]="prop"
+                        [selectedValue]="myCameraService.getCurrProp(cameraName,  this.myCameraService.getMapDescToCurrProp()[prop.desc]).val"
+                        [valueState]="myCameraService.getCurrProp(cameraName, this.myCameraService.getMapDescToCurrProp()[prop.desc]).state"
+                        (propChangeRequested)="changeProperty($event)"
+                        (propResetRequested)="resetProperty($event)">
+                </toggle>
+            </template>
+        </div>
+    </div>
+    <div class="bottom-right">
+        <div *ngFor="let prop of props">
+            <template [ngIf]="prop.type == 'toggle' && prop.desc == 'Record' ">
+                {{prop.desc}}:
+                <toggle
+                        [prop]="prop"
+                        [selectedValue]="myCameraService.getCurrProp(cameraName,  this.myCameraService.getMapDescToCurrProp()[prop.desc]).val"
+                        [valueState]="myCameraService.getCurrProp(cameraName, this.myCameraService.getMapDescToCurrProp()[prop.desc]).state"
+                        (propChangeRequested)="changeProperty($event)"
+                        (propResetRequested)="resetProperty($event)">
+                </toggle>
+            </template>
+        </div>
+    </div>
 </div>

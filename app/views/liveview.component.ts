@@ -1,4 +1,6 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {CameraService} from "../camera/camera.service";
+import {Model, mapDescToCurrProp, mapCurrPropToDesc, mirrorProps} from "../camera/c300.model";
 
 @Component({
     moduleId: module.id,
@@ -10,6 +12,8 @@ import {Component, Input, Output, EventEmitter} from "@angular/core";
 export class LiveviewComponent {
 
     @Input()
+    cameraName: any;
+    @Input()
     props: any;
 
     propLvToggle: any;
@@ -20,7 +24,7 @@ export class LiveviewComponent {
 
     checked: boolean;
 
-    constructor() {
+    constructor(public myCameraService:CameraService) {
 
         this.checked = false;
     }
@@ -82,6 +86,18 @@ export class LiveviewComponent {
 
     stopStreamingLvImage() {
 
+    }
+
+    public changeProperty(args: string[]): void {
+        this.myCameraService.changeProperty(this.cameraName, args[0], args[1]);
+    }
+
+    public resetProperty(args: string[]): void {
+        this.myCameraService.resetProperty(this.cameraName, args);
+    }
+
+    public getMapDescToCurrProp(): any {
+        return mapDescToCurrProp;
     }
 
 }

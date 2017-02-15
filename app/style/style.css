@@ -12,6 +12,18 @@
 /*------------------*/
 /*--- Widths, Margins etc... ---*/
 /*------------------------------*/
+.success {
+  color: #5cb85c; }
+
+.waiting {
+  color: orange; }
+
+.fail {
+  color: red; }
+
+.fa-times-circle {
+  cursor: pointer; }
+
 * {
   font-family: Raleway;
   color: #FFFFFF; }
@@ -27,7 +39,7 @@ input {
   color: #212121; }
 
 body, .carousel-inner {
-  height: 100%; }
+  min-height: 100%; }
 
 div.login.active video#bgvid-login {
   display: block; }
@@ -166,11 +178,29 @@ div.main-page {
     opacity: 0.78;
     display: none; }
   div.main-page .topbar {
-    background: #376177;
+    background: #212121;
     border-radius: 0;
     border: none;
     color: #FFFFFF;
-    margin: 0; }
+    margin: 0;
+    text-align: center; }
+    div.main-page .topbar .settings-top-bar {
+      margin: 0 auto;
+      margin-top: 9px; }
+      div.main-page .topbar .settings-top-bar button {
+        width: 170px;
+        background: #fff; }
+        div.main-page .topbar .settings-top-bar button span {
+          color: #212121; }
+      div.main-page .topbar .settings-top-bar button:hover {
+        background: #e0e0e0; }
+      div.main-page .topbar .settings-top-bar p-toggleButton .ui-button {
+        background: #fff;
+        width: 170px; }
+        div.main-page .topbar .settings-top-bar p-toggleButton .ui-button * {
+          color: #212121; }
+      div.main-page .topbar .settings-top-bar p-toggleButton:hover .ui-button {
+        background: #e0e0e0; }
     div.main-page .topbar .logo-wrapper {
       font-family: Lato;
       font-weight: bold;
@@ -195,7 +225,7 @@ div.main-page {
       padding-top: 37px;
       color: #FFFFFF;
       background: rgba(33, 33, 33, 0.6);
-      height: 100%; }
+      height: 50vmax; }
       div.main-page .content .middle-column button {
         background: #0275d8; }
       div.main-page .content .middle-column button:hover {
@@ -206,80 +236,61 @@ div.main-page {
           min-height: 300px;
           width: 48%;
           display: inline-block;
-          margin-right: 1%;
-          overflow: hidden; }
+          margin-right: 1%; }
           div.main-page .content .middle-column .live-view-wrapper .live-view-image img {
             width: 100%; }
+          div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar {
+            width: 97%;
+            margin: 0 auto;
+            margin-bottom: 5px;
+            margin-top: 12px;
+            height: 45px; }
+            div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-left, div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-right {
+              width: 50%;
+              float: left;
+              padding-right: 1%; }
+              div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-left .settings-header-wrapper, div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-right .settings-header-wrapper {
+                display: none; }
+              div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-left toggle, div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-right toggle {
+                display: inline-block; }
+                div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-left toggle .settings-content.toggle > span, div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-right toggle .settings-content.toggle > span {
+                  display: none; }
+            div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-left {
+              text-align: left; }
+            div.main-page .content .middle-column .live-view-wrapper .live-view-image .settings-control-bar .bottom-right {
+              text-align: right; }
+          div.main-page .content .middle-column .live-view-wrapper .live-view-image .split-live-view {
+            width: 100%; }
+          div.main-page .content .middle-column .live-view-wrapper .live-view-image .trans-live-view {
+            margin-top: 35px;
+            margin-bottom: 35px;
+            width: 200%;
+            position: relative; }
+            div.main-page .content .middle-column .live-view-wrapper .live-view-image .trans-live-view img {
+              position: relative;
+              left: 0;
+              top: 0;
+              width: 50%;
+              opacity: 0.5; }
+        div.main-page .content .middle-column .live-view-wrapper #live-view-image-left h3 {
+          width: 200%;
+          text-align: center;
+          text-transform: uppercase;
+          margin-bottom: 40px; }
+        div.main-page .content .middle-column .live-view-wrapper #live-view-image-left .trans-live-view img {
+          left: 0; }
+        div.main-page .content .middle-column .live-view-wrapper #live-view-image-right h3 {
+          color: transparent;
+          margin-bottom: 40px; }
+        div.main-page .content .middle-column .live-view-wrapper #live-view-image-right .trans-live-view {
+          right: 102.5%; }
+          div.main-page .content .middle-column .live-view-wrapper #live-view-image-right .trans-live-view img {
+            left: auto;
+            right: 0; }
         div.main-page .content .middle-column .live-view-wrapper .live-view-image:last-child {
           margin-right: 0; }
-      div.main-page .content .middle-column .settings-top-bar {
-        width: 97%;
-        margin: 0 auto;
-        margin-bottom: 5px;
-        height: 45px; }
-        div.main-page .content .middle-column .settings-top-bar #sync-mode-wrapper .btn-group .btn, div.main-page .content .middle-column .settings-top-bar #display-mode-wrapper .btn-group .btn {
-          border: 1px solid #212121; }
-          div.main-page .content .middle-column .settings-top-bar #sync-mode-wrapper .btn-group .btn i, div.main-page .content .middle-column .settings-top-bar #display-mode-wrapper .btn-group .btn i {
-            color: #212121;
-            margin-left: 7px; }
-        div.main-page .content .middle-column .settings-top-bar #sync-mode-wrapper .btn-group .btn.active, div.main-page .content .middle-column .settings-top-bar #display-mode-wrapper .btn-group .btn.active {
-          background: #0275d8;
-          color: #FFFFFF; }
-          div.main-page .content .middle-column .settings-top-bar #sync-mode-wrapper .btn-group .btn.active i, div.main-page .content .middle-column .settings-top-bar #display-mode-wrapper .btn-group .btn.active i {
-            color: #FFFFFF; }
-        div.main-page .content .middle-column .settings-top-bar #sync-mode-wrapper {
-          float: left; }
-        div.main-page .content .middle-column .settings-top-bar #display-mode-wrapper {
-          float: right; }
-      div.main-page .content .middle-column .settings-bottom-bar {
-        width: 97%;
-        margin: 0 auto;
-        margin-bottom: 5px;
-        margin-top: 12px;
-        height: 45px; }
-        div.main-page .content .middle-column .settings-bottom-bar .bottom-left, div.main-page .content .middle-column .settings-bottom-bar .bottom-right {
-          width: 50%;
-          float: left; }
-        div.main-page .content .middle-column .settings-bottom-bar .record-buttons .settings-header-wrapper, div.main-page .content .middle-column .settings-bottom-bar .live-view-buttons .settings-header-wrapper {
-          display: none; }
-        div.main-page .content .middle-column .settings-bottom-bar .bottom-left {
-          padding-right: 1%; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-record-left-wrapper .btn-group .btn, div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-live-view-left-wrapper .btn-group .btn {
-            border: 1px solid #212121; }
-            div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-record-left-wrapper .btn-group .btn i, div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-live-view-left-wrapper .btn-group .btn i {
-              color: #212121;
-              margin-left: 7px; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-record-left-wrapper .btn-group .btn.active, div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-live-view-left-wrapper .btn-group .btn.active {
-            background: #0275d8;
-            color: #FFFFFF; }
-            div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-record-left-wrapper .btn-group .btn.active i, div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-live-view-left-wrapper .btn-group .btn.active i {
-              color: #FFFFFF; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-record-left-wrapper {
-            float: left; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-left #start-live-view-left-wrapper {
-            float: right; }
-        div.main-page .content .middle-column .settings-bottom-bar .bottom-right {
-          padding-left: 1%; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-record-right-wrapper .btn-group .btn, div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-live-view-right-wrapper .btn-group .btn {
-            border: 1px solid #212121; }
-            div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-record-right-wrapper .btn-group .btn i, div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-live-view-right-wrapper .btn-group .btn i {
-              color: #212121;
-              margin-left: 7px; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-record-right-wrapper .btn-group .btn.active, div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-live-view-right-wrapper .btn-group .btn.active {
-            background: #0275d8;
-            color: #FFFFFF; }
-            div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-record-right-wrapper .btn-group .btn.active i, div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-live-view-right-wrapper .btn-group .btn.active i {
-              color: #FFFFFF; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-record-right-wrapper {
-            float: left; }
-          div.main-page .content .middle-column .settings-bottom-bar .bottom-right #start-live-view-right-wrapper {
-            float: right; }
-      div.main-page .content .middle-column #info-text {
-        width: 97%;
-        margin: 0 auto;
-        margin-top: 65px; }
     div.main-page .content .settings-column {
-      height: 100%;
+      height: 50vmax;
       background: #212121;
       padding: 15px; }
       div.main-page .content .settings-column h2 {
@@ -600,19 +611,3 @@ div.main-page {
     width: 100% !important; } }
 
 /*# sourceMappingURL=style.css.map */
-.success {
-    color: #5cb85c;
-}
-
-.waiting {
-    color: orange;
-}
-
-.fail {
-    color: red;
-}
-
-.fa-times-circle {
-    cursor: pointer;
-}
-

@@ -228,6 +228,21 @@ $pmHeight: 30px;
 
 }
 
+.success {
+  color: #5cb85c;
+}
+
+.waiting {
+  color: orange;
+}
+
+.fail {
+  color: red;
+}
+
+.fa-times-circle {
+  cursor: pointer;
+}
 
 
 
@@ -246,7 +261,7 @@ input {
   color:$textDark;
 }
 body, .carousel-inner {
-  height:100%;
+  min-height:100%;
 }
 
 div.login.active {
@@ -397,11 +412,45 @@ div.main-page {
   }
 
   .topbar {
-    background: #376177;
+    background: $textDark;
     border-radius: 0;
     border:none;
     color:$textWhite;
     margin:0;
+    text-align:center;
+
+
+    .settings-top-bar {
+      margin:0 auto;
+      margin-top:9px;
+
+      button {
+        width:170px;
+        background: #fff;
+
+        span {
+          color:$textDark;
+        }
+      }
+      button:hover {
+        background: darken(#fff, 12%);
+      }
+      p-toggleButton {
+        .ui-button {
+          background: #fff;
+          width:170px;
+
+          * {
+            color:$textDark;
+          }
+        }
+      }
+      p-toggleButton:hover {
+        .ui-button {
+          background: darken(#fff, 12%);
+        }
+      }
+    }
 
     .logo-wrapper {
       font-family: Lato;
@@ -434,7 +483,7 @@ div.main-page {
       padding-top:37px;
       color:$textWhite;
       background: rgba(33,33,33, 0.6);
-      height:100%;
+      height:50vmax;
 
       button {
         background:$accentColor;
@@ -451,92 +500,99 @@ div.main-page {
           width:48%;
           display:inline-block;
           margin-right:1%;
-          overflow:hidden;
 
           img {
             width:100%;
+          }
+
+          .settings-control-bar {
+            width:97%;
+            margin:0 auto;
+            margin-bottom:5px;
+            margin-top:12px;
+            height:45px;
+
+            .bottom-left, .bottom-right {
+              width:50%;
+              float:left;
+              padding-right:1%;
+
+              .settings-header-wrapper {
+                display:none;
+              }
+              toggle {
+                display:inline-block;
+
+                .settings-content.toggle {
+                  > span {
+                    display:none;
+                  }
+                }
+              }
+            }
+            .bottom-left {
+              text-align:left;
+            }
+            .bottom-right {
+              text-align:right;
+            }
+          }
+
+          .split-live-view {
+            width:100%;
+          }
+          .trans-live-view {
+            margin-top:35px;
+            margin-bottom:35px;
+            width:200%;
+            position:relative;
+
+            img {
+              position:relative;
+              left:0;
+              top:0;
+              width:50%;
+              opacity:0.5;
+            }
+          }
+        }
+        #live-view-image-left {
+          h3 {
+            width:200%;
+            text-align: center;
+            text-transform: uppercase;
+            margin-bottom:40px;
+          }
+          .trans-live-view {
+            img {
+              left:0;
+            }
+          }
+        }
+        #live-view-image-right {
+          h3 {
+            color:transparent;
+            margin-bottom:40px;
+          }
+          .trans-live-view {
+            right:102.5%;
+
+            img {
+              left:auto;
+              right:0;
+            }
           }
         }
         .live-view-image:last-child {
           margin-right:0;
         }
       }
-
-      .settings-top-bar {
-        width:97%;
-        margin:0 auto;
-        margin-bottom:5px;
-        height:45px;
-
-        #sync-mode-wrapper, #display-mode-wrapper {
-          @include button-group-defaults();
-        }
-        #sync-mode-wrapper {
-          float:left;
-        }
-        #display-mode-wrapper {
-          float:right;
-        }
-      }
-
-      .settings-bottom-bar {
-        width:97%;
-        margin:0 auto;
-        margin-bottom:5px;
-        margin-top:12px;
-        height:45px;
-
-        .bottom-left, .bottom-right {
-          width:50%;
-          float:left;
-        }
-
-        .record-buttons, .live-view-buttons {
-          .settings-header-wrapper {
-            display:none;
-          }
-        }
-
-        .bottom-left {
-          padding-right:1%;
-
-          #start-record-left-wrapper, #start-live-view-left-wrapper {
-            @include button-group-defaults();
-          }
-          #start-record-left-wrapper {
-            float:left
-          }
-          #start-live-view-left-wrapper {
-            float:right;
-          }
-        }
-
-        .bottom-right {
-          padding-left:1%;
-
-          #start-record-right-wrapper, #start-live-view-right-wrapper {
-            @include button-group-defaults();
-          }
-          #start-record-right-wrapper {
-            float:left
-          }
-          #start-live-view-right-wrapper {
-            float:right;
-          }
-        }
-      }
-
-      #info-text {
-        width:97%;
-        margin:0 auto;
-        margin-top:65px;
-      }
     }
 
 
 
     .settings-column {
-      height:100%;
+      height:50vmax;
       background:$textDark;
       padding:15px;
 

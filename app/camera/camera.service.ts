@@ -15,8 +15,12 @@ export class CameraService {
 
     private liveViewTimer: any;
     private liveViewTimerSubscription: any;
+    private liveViewTimerStartDelay:number = 1000;
+    private liveViewTimerFrequency:number = 500;
     private updateLoopTimer: any;
     private updateLoopTimerSubscription: any;
+    private updateLoopTimerStartDelay:number = 0;
+    private updateLoopTimerFrequency:number = 2000;
     private requestQueue: RequestData[];
 
     private myLoginService: LoginService;
@@ -30,8 +34,6 @@ export class CameraService {
         this.myAppService = appService;
         this.zone = zone;
         this.requestQueue = Array();
-        //this.pushToRequestQueue({requestURL: '1234', iterations: 0, state: RequestState.Pending});
-        //console.log(this.requestQueue);
 
         ipcRenderer.on("response", (event: any, resp: any, body: any) => {
             this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.requestURL);
@@ -51,8 +53,15 @@ export class CameraService {
         this.startUpdateLoopTimer();
     }
 
+    public pingCameras() {
+        this.myAppService.showGrowl("error", "Property couldn't be changed", "Operation not allowed");
+
+        //this.sendRequest('left', query, propDesc);
+        //this.sendRequest('right', query, propDesc);
+    }
+
     public startLiveViewTimer() {
-        this.liveViewTimer = Observable.timer(1000, 500);
+        this.liveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
         this.liveViewTimerSubscription = this.liveViewTimer.subscribe(t => this.updateLiveView(t));
     }
 
@@ -65,12 +74,12 @@ export class CameraService {
     }
 
     public startUpdateLoopTimer() {
-        this.updateLoopTimer = Observable.timer(0, 2000);
-        this.updateLoopTimer = this.updateLoopTimer.subscribe(t => this.updateLoop(t));
+        this.updateLoopTimer = Observable.timer(this.updateLoopTimerStartDelay, this.updateLoopTimerFrequency);
+        this.updateLoopTimerSubscription = this.updateLoopTimer.subscribe(t => this.updateLoop(t));
     }
 
     public stopUpdateLoopTimer() {
-        this.updateLoopTimer.unsubscribe();
+        this.updateLoopTimerSubscription.unsubscribe();
     }
 
     private updateLoop(tick: any) {
@@ -93,6 +102,18 @@ export class CameraService {
 
     public getAdjustableProps(cam_name: string): any {
         return this.model[cam_name].adjustableProperties;
+    }
+
+    public getLiveViewProps(cam_name: string) :any {
+        let lvprops = Array();
+        let adjProps = this.model[cam_name].adjustableProperties;
+        for(let i = 0; i < adjProps.length; i++) {
+            if(adjProps[i].desc == "Liveview" || adjProps[i].desc == "Liveview-Image" ||
+                adjProps[i].desc == "Record") {
+                lvprops.push(adjProps[i]);
+            }
+        }
+        return lvprops;
     }
 
     public getCurrProps(cam_name: string): any {
@@ -182,7 +203,6 @@ export class CameraService {
     }
 
     private parseResponse(host: string, path: any, body: any, url:any) {
-        console.log("URL RESPONSE:" + url);
         console.log(`[Parse Response | Host: ${host}, Path: ${path}] ${JSON.stringify(body)}`);
 
         let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
@@ -300,7 +320,7 @@ export class CameraService {
 
     private pushToRequestQueue(element:RequestData) {
         for(let i = 0; i < this.requestQueue.length; i++) {
-            if(this.isRequestDataEqual(element,this.requestQueue[i])) {
+            if(element.requestURL === this.requestQueue[i].requestURL) {
                 this.requestQueue[i] = element;
                 return;
             }
@@ -315,13 +335,6 @@ export class CameraService {
             }
         }
         return 0;
-    }
-
-    private isRequestDataEqual(data1:RequestData, data2:RequestData) {
-        if(data1.requestURL === data2.requestURL) {
-            return true;
-        }
-        return false;
     }
 }
 

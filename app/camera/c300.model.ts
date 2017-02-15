@@ -48,6 +48,7 @@ export class Model {
         "protocolWftServer": "http",
         "queryPropState": "getprop?r=",
         "queryAllPropsStates": "getcurprop?seq=0",
+        "pingCamera" : "ping=0",
     }
 
     currentProperties = {

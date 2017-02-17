@@ -43,6 +43,10 @@ export const mapDescToCurrProp = {
 
 export class Model {
 
+    directiveProperties = {
+        "sidebarVisible": false,
+    }
+
     generalProperties = {
         "pathWftServer": "/api/cam/",
         "protocolWftServer": "http",

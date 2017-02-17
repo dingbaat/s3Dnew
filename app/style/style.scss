@@ -252,10 +252,11 @@ $pmHeight: 30px;
 }
 html,body {
   max-width:1920px;
-  min-width:480px;
+  min-width:870px;
 }
 html {
   height:100%;
+  min-height: 100%;
 }
 input {
   color:$textDark;
@@ -271,7 +272,8 @@ div.login.active {
 }
 div.login {
   background: $primaryColorLight;
-  height:100%;
+  min-height:100vh;
+  height:50vmax;
 
   .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
     top:-0.3em !important;
@@ -419,6 +421,23 @@ div.main-page {
     margin:0;
     text-align:center;
 
+    .sidebarMenu {
+      font-size:30px;
+      color:#fff;
+      position: absolute;
+      top:9px;
+      z-index:999;
+      display:none;
+    }
+    .sidebarMenu:hover {
+      cursor: pointer;
+    }
+    .sidebarMenu.left {
+      left:14px;
+    }
+    .sidebarMenu.right {
+      right:14px;
+    }
 
     .settings-top-bar {
       margin:0 auto;
@@ -483,7 +502,7 @@ div.main-page {
       padding-top:37px;
       color:$textWhite;
       background: rgba(33,33,33, 0.6);
-      height:50vmax;
+      height:100vh;
 
       button {
         background:$accentColor;
@@ -589,10 +608,13 @@ div.main-page {
       }
     }
 
-
-
+    .settings-column.active {
+      display:block;
+    }
     .settings-column {
-      height:50vmax;
+      height:100%;
+      min-height:100vh;
+      max-height:none;
       background:$textDark;
       padding:15px;
 
@@ -779,6 +801,83 @@ div.main-page {
       }
     }
 
+  }
+}
+
+@media(max-width:1840px) {
+  div.main-page {
+    .content {
+      .settings-column {
+        .settings-wrapper {
+          .settings-content {
+            .ui-button {
+              //width:10% !important;
+            }
+
+
+          }
+          .settings-content.slider, .settings-content.dropdown-slider {
+            .dropdown:not(.upper-dropdown), .dropdown:not(.upper-dropdown) .ui-dropdown {
+              width:38% !important;
+            }
+            .dropdown.upper-dropdown {
+              width:94% !important;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media(max-width:1450px) {
+  div.main-page {
+    .content {
+      .settings-column {
+        width:20% !important;
+      }
+      .middle-column {
+        width:60% !important;
+      }
+    }
+  }
+}
+
+
+@media(max-width:1250px) {
+  div.main-page {
+    .topbar {
+      .sidebarMenu {
+        display:inline;
+      }
+    }
+
+    .content {
+      .settings-column {
+        position:absolute;
+        top:50px;
+        left:0;
+        width:30% !important;
+        //display:none;
+        z-index:99;
+      }
+      .settings-column.inactive {
+        z-index:0;
+        opacity:0;
+      }
+      .settings-column.right-column {
+        left:auto;
+        right:0;
+      }
+      .middle-column {
+        width:100% !important;
+        display:block;
+        float:none !important;
+      }
+    }
+  }
+  div.main-page .topbar .settings-top-bar p-toggleButton .ui-button {
+    width: 140px;
   }
 }
 

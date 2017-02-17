@@ -30,10 +30,11 @@
 
 html, body {
   max-width: 1920px;
-  min-width: 480px; }
+  min-width: 870px; }
 
 html {
-  height: 100%; }
+  height: 100%;
+  min-height: 100%; }
 
 input {
   color: #212121; }
@@ -46,7 +47,8 @@ div.login.active video#bgvid-login {
 
 div.login {
   background: #00BCD4;
-  height: 100%; }
+  min-height: 100vh;
+  height: 50vmax; }
   div.login .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
     top: -0.3em !important; }
   div.login .ui-radiobutton .ui-radiobutton-box {
@@ -184,6 +186,19 @@ div.main-page {
     color: #FFFFFF;
     margin: 0;
     text-align: center; }
+    div.main-page .topbar .sidebarMenu {
+      font-size: 30px;
+      color: #fff;
+      position: absolute;
+      top: 9px;
+      z-index: 999;
+      display: none; }
+    div.main-page .topbar .sidebarMenu:hover {
+      cursor: pointer; }
+    div.main-page .topbar .sidebarMenu.left {
+      left: 14px; }
+    div.main-page .topbar .sidebarMenu.right {
+      right: 14px; }
     div.main-page .topbar .settings-top-bar {
       margin: 0 auto;
       margin-top: 9px; }
@@ -225,7 +240,7 @@ div.main-page {
       padding-top: 37px;
       color: #FFFFFF;
       background: rgba(33, 33, 33, 0.6);
-      height: 50vmax; }
+      height: 100vh; }
       div.main-page .content .middle-column button {
         background: #0275d8; }
       div.main-page .content .middle-column button:hover {
@@ -289,8 +304,12 @@ div.main-page {
             right: 0; }
         div.main-page .content .middle-column .live-view-wrapper .live-view-image:last-child {
           margin-right: 0; }
+    div.main-page .content .settings-column.active {
+      display: block; }
     div.main-page .content .settings-column {
-      height: 50vmax;
+      height: 100%;
+      min-height: 100vh;
+      max-height: none;
       background: #212121;
       padding: 15px; }
       div.main-page .content .settings-column h2 {
@@ -606,6 +625,38 @@ div.main-page {
         margin-right: 0.5%;
         padding-top: 4px; }
 
+@media (max-width: 1840px) {
+  div.main-page .content .settings-column .settings-wrapper .settings-content.slider .dropdown:not(.upper-dropdown), div.main-page .content .settings-column .settings-wrapper .settings-content.slider .dropdown:not(.upper-dropdown) .ui-dropdown, div.main-page .content .settings-column .settings-wrapper .settings-content.dropdown-slider .dropdown:not(.upper-dropdown), div.main-page .content .settings-column .settings-wrapper .settings-content.dropdown-slider .dropdown:not(.upper-dropdown) .ui-dropdown {
+    width: 38% !important; }
+  div.main-page .content .settings-column .settings-wrapper .settings-content.slider .dropdown.upper-dropdown, div.main-page .content .settings-column .settings-wrapper .settings-content.dropdown-slider .dropdown.upper-dropdown {
+    width: 94% !important; } }
+@media (max-width: 1450px) {
+  div.main-page .content .settings-column {
+    width: 20% !important; }
+  div.main-page .content .middle-column {
+    width: 60% !important; } }
+@media (max-width: 1250px) {
+  div.main-page .topbar .sidebarMenu {
+    display: inline; }
+  div.main-page .content .settings-column {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 30% !important;
+    z-index: 99; }
+  div.main-page .content .settings-column.inactive {
+    z-index: 0;
+    opacity: 0; }
+  div.main-page .content .settings-column.right-column {
+    left: auto;
+    right: 0; }
+  div.main-page .content .middle-column {
+    width: 100% !important;
+    display: block;
+    float: none !important; }
+
+  div.main-page .topbar .settings-top-bar p-toggleButton .ui-button {
+    width: 140px; } }
 @media (max-width: 992px) {
   .login-submit {
     width: 100% !important; } }

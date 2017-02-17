@@ -392,6 +392,19 @@ export class CameraService {
         }
         return 0;
     }
+
+    public isCameraSidebarActive(cam_name: string) {
+        return this.model[cam_name].directiveProperties["sidebarVisisble"];
+    }
+
+    public toggleCameraSidebar(cam_name: string) {
+        this.zone.run(() => {
+            if(this.model[cam_name].directiveProperties["sidebarVisisble"] === true)
+                this.model[cam_name].directiveProperties["sidebarVisisble"] = false;
+            else
+                this.model[cam_name].directiveProperties["sidebarVisisble"] = true;
+        });
+    }
 }
 
 

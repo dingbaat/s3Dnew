@@ -180,13 +180,13 @@ export class CameraService {
 
     private pingCamera(cam_name: string) {
         let encodedQuery = encodeURIComponent(`${this.model[cam_name].generalProperties.pingCamera}-${cam_name}`);
-        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
+        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
         this.pushToRequestQueue({requestURL: url, iterations: 0, state: RequestState.Pending});
     }
 
     private sendRequest(cam_name: string, query: string, propDesc: string): void {
-        let encodedQuery = encodeURIComponent(query);
-        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
+        let encodedQuery = query;
+        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
         console.log(`[Request | ${cam_name}] ${url}`);
 
         //Set state of currProp to 'waiting'
@@ -196,14 +196,14 @@ export class CameraService {
 
         //TODO uncomment for production use
         //var id = setInterval(ipcRenderer.send("request", url), 2000);
-        //ipcRenderer.send("request", url);
-        this.pushToRequestQueue({requestURL: url, iterations: 0, state: RequestState.Pending});
+        ipcRenderer.send("request", url);
+        //this.pushToRequestQueue({requestURL: url, iterations: 0, state: RequestState.Pending});
 
 
         //TODO comment for production use
         let testUrl = "http://webuser.hs-furtwangen.de/~hochanda/RemoteStereo/Testdaten.txt/?a=b";
         //ipcRenderer.send("request", testUrl);
-        this.parseResponseDummy(query, cam_name, url);
+        //this.parseResponseDummy(query, cam_name, url);
     }
 
     private parseResponseDummy(resp: any, cam_name: string, url:string): void {

@@ -41,19 +41,19 @@ export class LoginComponent {
 
     private initializeInputs(): void {
         this.leftCameraInput = {
-            username: '',
+            username: 'A',
             usernameValid: true,
-            password: '',
+            password: 'B',
             passwordValid: true,
-            ipAddress: '1.2.3.4',
+            ipAddress: '192.168.1.1',
             ipAddressValid: true
         }
         this.rightCameraInput = {
-            username: '',
+            username: 'C',
             usernameValid: true,
-            password: '',
+            password: 'D',
             passwordValid: true,
-            ipAddress: '5.6.7.8',
+            ipAddress: '192.168.1.2',
             ipAddressValid: true
         }
     }

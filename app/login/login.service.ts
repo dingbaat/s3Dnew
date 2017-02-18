@@ -5,6 +5,8 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import {Observable} from 'rxjs/Observable';
 import {LoginComponent} from "./login.component";
+import {CameraService} from "../camera/camera.service";
+
 
 const noLoginErrorMssg: string = "NOERROR";
 
@@ -41,6 +43,14 @@ export class LoginService {
         this.loggedIn = true;
     }
 
+    getPassword(cam_name: string) {
+        return cam_name == "left" ? this.pass_left : this.pass_right;
+    }
+
+    getUser(cam_name: string) {
+        return cam_name == "left" ? this.user_left : this.user_right;
+    }
+
     logout(): void {
 
         this.ip_left = "";
@@ -69,17 +79,17 @@ export class LoginService {
         return response;
     }
 
-    public getCamNameByIp(ip:string) {
-        if(ip.includes(this.ip_left))
+    public getCamNameByIp(ip: string) {
+        if (ip.includes(this.ip_left))
             return "left";
-        else if(ip.includes(this.ip_right))
+        else if (ip.includes(this.ip_right))
             return "right";
         else
             return null;
     }
 
-    public setMasterCamera(camera:string) {
-        if(camera != "left" && camera != "right")
+    public setMasterCamera(camera: string) {
+        if (camera != "left" && camera != "right")
             return;
 
         this.master_camera = camera;
@@ -90,8 +100,10 @@ export class LoginService {
     }
 
     public checkCameraConnection(cameraInputType: CameraInputType, loginComponent: LoginComponent) {
+        let cam_name = cameraInputType == CameraInputType.left ? "left" : "right";
+        let cam = cameraInputType == CameraInputType.left ? loginComponent.leftCameraInput : loginComponent.rightCameraInput;
         //let url = cameraInputType === CameraInputType.left ? this.leftCameraInput.ipAddress : this.rightCameraInput.ipAddress;
-        let url = "http://www.google.de";
+        let url = `http://${cam.username}:${cam.password}@${cam.ipAddress}/api/cam/getcurprop?seq=0`;
         this.checkConnection(url).subscribe(
             connection => {
                 console.log("finished request")
@@ -104,7 +116,7 @@ export class LoginService {
         );
     }
 
-    private doLogin(cameraInputType: CameraInputType, loginComponent:LoginComponent): void {
+    private doLogin(cameraInputType: CameraInputType, loginComponent: LoginComponent): void {
         cameraInputType === CameraInputType.left ? loginComponent.leftCameraReadyToLogIn = true : loginComponent.rightCameraReadyToLogIn = true;
 
         if (loginComponent.leftCameraReadyToLogIn === true && loginComponent.rightCameraReadyToLogIn === true) {

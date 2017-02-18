@@ -37,7 +37,16 @@ function init() {
     })
 
     ipcMain.on('request', function (event, args) {
-        request(args, function (error, response, body) {
+
+        var options = {
+            url: args['url'],
+            headers: {
+                'Cookie': 'acid=' + args['acid']+';'+ 'authLevel=' + args['authlevel']
+            },
+            followRedirect: false
+        };
+
+        request(options, function (error, response, body) {
 
             if (error) {
                 if (msg = errorMap[error.code]) {
@@ -49,6 +58,27 @@ function init() {
                 event.sender.send("error", `${response.statusCode}: ${response.statusMessage}`, args);
             } else {
                 event.sender.send("response", response, body);
+            }
+        })
+    })
+
+    ipcMain.on('loginRequest', function (event, args) {
+
+        var options = {
+            url: args['url'],
+            followRedirect: false
+        };
+
+        request(options, function (error, response, body) {
+
+            if (error) {
+                if (msg = errorMap[error.code]) {
+                    event.sender.send("loginError", msg, args);
+                } else {
+                    event.sender.send("loginError", `There is a network problem (${error.code})`, args);
+                }
+            }  else {
+                event.sender.send("loginResponse", response, body);
             }
         })
     })

@@ -49,16 +49,16 @@ export class CameraService {
                 this.parsePingResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
             }
             else {
-                this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.requestURL);
+                this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
             }
         });
 
         ipcRenderer.on("error", (event: any, msg: any, args: any) => {
             console.log(`[Error] ${msg}`);
-            let ip = args.substring(this.model['left'].generalProperties.protocolWftServer.length + 3);
+            let ip = args['url'].substring(this.model['left'].generalProperties.protocolWftServer.length + 3);
             ip = ip.substring(0, ip.indexOf("/"));
             let cam_name = this.loginService.getCamNameByIp(ip);
-            let query = args.substring(args.lastIndexOf('/') + 1);
+            let query = args['url'].substring(args['url'].lastIndexOf('/') + 1);
             let pingQuery = this.model[cam_name].generalProperties.pingCamera+"-"+cam_name;
 
             if(decodeURIComponent(query) == pingQuery) {
@@ -72,7 +72,7 @@ export class CameraService {
                 });
             }
             this.SetWaitingPropsToFail(this.myLoginService.getCamNameByIp(ip));
-            this.pushToRequestQueue({requestURL: args, iterations: this.getRequestIterationsByURL(args), state: RequestState.Fail});
+            this.pushToRequestQueue({cam_name: cam_name, requestURL: args, iterations: this.getRequestIterationsByURL(args), state: RequestState.Fail});
         });
 
         this.startUpdateLoopTimer();
@@ -104,7 +104,7 @@ export class CameraService {
         for(let i = 0; i < this.requestQueue.length; i++) {
             if(this.requestQueue[i].iterations < 4 && this.requestQueue[i].state === RequestState.Pending) {
                 this.requestQueue[i].iterations++;
-                ipcRenderer.send("request", this.requestQueue[i].requestURL);
+                ipcRenderer.send("request", {url: this.requestQueue[i].requestURL, authlevel:this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel, acid:this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid});
                 console.log("RESENDING REQUEST.........");
             }
             else {
@@ -181,11 +181,18 @@ export class CameraService {
     private pingCamera(cam_name: string) {
         let encodedQuery = encodeURIComponent(`${this.model[cam_name].generalProperties.pingCamera}-${cam_name}`);
         let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
-        this.pushToRequestQueue({requestURL: url, iterations: 0, state: RequestState.Pending});
+        this.pushToRequestQueue({cam_name: cam_name,requestURL: url, iterations: 0, state: RequestState.Pending});
     }
 
     private sendRequest(cam_name: string, query: string, propDesc: string): void {
         let encodedQuery = query;
+
+        if(propDesc == 'Shutterspeed-Value'){
+            var s1 = query.substring(0, query.lastIndexOf('/'));
+            var s2 = query.substring(query.lastIndexOf('/')+1);
+            encodedQuery = s1 + '%2F' + s2;
+            console.log(encodedQuery);
+        }
         let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
         console.log(`[Request | ${cam_name}] ${url}`);
 
@@ -196,8 +203,8 @@ export class CameraService {
 
         //TODO uncomment for production use
         //var id = setInterval(ipcRenderer.send("request", url), 2000);
-        ipcRenderer.send("request", url);
-        //this.pushToRequestQueue({requestURL: url, iterations: 0, state: RequestState.Pending});
+        //ipcRenderer.send("request", {url:url, authlevel:this.myLoginService.getCookie(cam_name).authlevel, acid:this.myLoginService.getCookie(cam_name).acid});
+        this.pushToRequestQueue({cam_name: cam_name, requestURL: url, iterations: 0, state: RequestState.Pending});
 
 
         //TODO comment for production use
@@ -240,6 +247,8 @@ export class CameraService {
         if (body["res"] != null) {
             if (body["res"] == "ok") {
 
+                this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
+
                 for (let item in body) {
 
                     //Item is a currentProp
@@ -254,7 +263,6 @@ export class CameraService {
                                     this.zone.run(() => {
                                         this.model[camName].currentProperties[item][subItem] = body[item][subItem];
                                         this.model[camName].currentProperties[item].state = 'success';
-                                        this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
                                     });
                                 }
                             }
@@ -266,7 +274,6 @@ export class CameraService {
                                 this.zone.run(() => {
                                     this.model[camName].currentProperties[item].val = body[item];
                                     this.model[camName].currentProperties[item].state = 'success';
-                                    this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
                                 });
                             }
 
@@ -282,7 +289,7 @@ export class CameraService {
                     //this.model[camName].currentProperties['Oav'].pv = 20;
                     this.myAppService.showGrowl("error", "Property couldn't be changed", "Operation not allowed");
                     this.SetWaitingPropsToFail(camName);
-                    this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                    this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
                 });
             }
         } else {
@@ -290,7 +297,7 @@ export class CameraService {
             this.zone.run(() => {
                 this.myAppService.showGrowl("error", "Property couldn't be changed", "There was a network problem. Try again!");
                 this.SetWaitingPropsToFail(camName);
-                this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
             });
         }
     }
@@ -305,18 +312,18 @@ export class CameraService {
             if (body["res"] == "ok") {
                 this.zone.run(() => {
                     this.myAppService.showGrowl("success", "Pinged " + camName + " camera successfully", "Success");
-                    this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
+                    this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
                 });
             } else {
                 this.zone.run(() => {
                     this.myAppService.showGrowl("error", "Couldn't ping " + camName + " camera successfully", "Network error");
-                    this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                    this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
                 });
             }
         } else {
             this.zone.run(() => {
                 this.myAppService.showGrowl("error", "Couldn't ping " + camName + " camera successfully", "Network error");
-                this.pushToRequestQueue({requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
             });
         }
     }
@@ -412,6 +419,7 @@ interface RequestData {
     requestURL: string;
     state: RequestState;
     iterations: number;
+    cam_name:string;
 }
 
 enum RequestState {

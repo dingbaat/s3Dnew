@@ -30,6 +30,7 @@
     <script>
         //http://stackoverflow.com/questions/36286592/how-to-integrate-electron-ipcrenderer-into-angular-2-app-based-on-typescript
         System.set('electron', System.newModule(require('electron')));
+        System.set('fs-jetpack', System.newModule(require('fs-jetpack')));
         System.import('app').catch(function (err) {
             console.error(err);
         });

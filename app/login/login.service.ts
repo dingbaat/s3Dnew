@@ -8,14 +8,14 @@ import {LoginComponent} from "./login.component";
 import {CameraService} from "../camera/camera.service";
 import {ipcRenderer} from 'electron';
 import {log} from "util";
-
+import * as fs from "fs-jetpack";
 
 const noLoginErrorMssg: string = "NOERROR";
 
 @Injectable()
 export class LoginService {
 
-
+    private login_steps: any;
     private master_camera = "";
     private ip_left: string;
     private ip_right: string;
@@ -33,35 +33,89 @@ export class LoginService {
     constructor(private networkService: NetworkService, private http: Http, private zone: NgZone) {
         this.myNetworkService = networkService;
 
+        this.login_steps = {"left": 0, "right": 0};
+
         ipcRenderer.on("loginResponse", (event: any, resp: any, body: any) => {
             let ip = resp.request.href.substring(("http://").length);
             ip = ip.substring(0, ip.indexOf("/"));
             let cam_name = this.getCamNameByIp(ip);
 
 
-            let acid:string, authlevel:string;
-            if(resp.headers["set-cookie"][0].includes("acid")) {
-                acid = resp.headers["set-cookie"][0].substring(resp.headers["set-cookie"][0].indexOf("=")+1, resp.headers["set-cookie"][0].indexOf(";"));
-                authlevel = 'full';
+            let acid: string, authlevel: string;
 
+            if (this.login_steps[cam_name] == 1) {
+
+                this.checkConnection(`http://${ip}/api/acnt/login`);
+                this.login_steps[cam_name]++;
+
+            } else if (this.login_steps[cam_name] == 2) {
+
+                if (cam_name == "left") {
+                    this.checkConnection(`http://${this.current_login_component.leftCameraInput.username}:${this.current_login_component.leftCameraInput.password}@${ip}/api/acnt/login`);
+                } else {
+                    this.checkConnection(`http://${this.current_login_component.rightCameraInput.username}:${this.current_login_component.rightCameraInput.password}@${ip}/api/acnt/login`);
+                }
+                this.login_steps[cam_name]++;
+
+            } else if (this.login_steps[cam_name] == 3) {
+                console.log(cam_name);
+                console.log(resp.headers);
+
+                if (resp.headers["set-cookie"] && resp.headers["set-cookie"].length > 1) {
+
+                    this.login_steps[cam_name] = 0;
+
+                    if (resp.headers["set-cookie"][0].includes("acid")) {
+                        acid = resp.headers["set-cookie"][0].substring(resp.headers["set-cookie"][0].indexOf("=") + 1, resp.headers["set-cookie"][0].indexOf(";"));
+                        authlevel = 'full';
+
+                    }
+                    else if (resp.headers["set-cookie"][0].includes("authlevel")) {
+                        authlevel = 'full';
+                        acid = resp.headers["set-cookie"][1].substring(resp.headers["set-cookie"][0].indexOf("=") + 1, resp.headers["set-cookie"][0].length);
+                    } else {
+                        console.log(cam_name);
+                        console.log("Cookie errror");
+                    }
+
+
+                    if (cam_name == "left") {
+                        this.cookie_left = {acid: acid, authlevel: authlevel};
+                    }
+                    else {
+                        this.cookie_right = {acid: acid, authlevel: authlevel};
+                    }
+
+                    this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("NOERROR"));
+                    this.doLogin(cam_name);
+                } else {
+
+                    var cookies = fs.read('cookies.json', 'json');
+
+                    //TODO
+                    if (cam_name == "left") {
+                        ipcRenderer.send('request', {
+                            url: 'http://' + this.current_login_component.leftCameraInput.username +
+                            ':' + this.current_login_component.leftCameraInput.password + '@' + ip + '/api/cam/getcurprop?seq=0',
+                            acid: cookies[cam_name].acid,
+                            authlevel: cookies[cam_name].authlevel
+                        });
+                    }
+                    else {
+                        ipcRenderer.send('request', {
+                            url: 'http://' + this.current_login_component.rightCameraInput.username +
+                            ':' + this.current_login_component.rightCameraInput.password + '@' + ip + '/api/cam/getcurprop?seq=0',
+                            acid: cookies[cam_name].acid,
+                            authlevel: cookies[cam_name].authlevel
+                        });
+                    }
+
+                    this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("cookieError"));
+                    this.login_steps[cam_name] = 0;
+                }
             }
-            else {
-                authlevel = 'full';
-                acid = resp.headers["set-cookie"][1].substring(resp.headers["set-cookie"][0].indexOf("=")+1, resp.headers["set-cookie"][0].length);
-            }
 
 
-
-            if(cam_name == "left") {
-                this.cookie_left = {acid: acid, authlevel: authlevel};
-            }
-            else {
-                this.cookie_right = {acid: acid, authlevel: authlevel};
-            }
-            console.log(resp);
-
-            let cameraInputType = cam_name == "left" ? CameraInputType.left : CameraInputType.right;
-            this.doLogin(cam_name);
         });
 
         ipcRenderer.on("loginError", (event: any, msg: any, args: any) => {
@@ -70,7 +124,16 @@ export class LoginService {
             let cam_name = this.getCamNameByIp(ip);
             let cameraInputType = cam_name == "left" ? CameraInputType.left : CameraInputType.right;
 
-            this.current_login_component.updateLoginErrorStatus(cameraInputType, String("0"));
+            switch (msg) {
+                case "ENOENT" :
+                case "EACCES" :
+                    this.current_login_component.updateLoginErrorStatus(cameraInputType, String("403"));
+                default:
+                    this.current_login_component.updateLoginErrorStatus(cameraInputType, String("0"));
+                    break;
+            }
+
+
             this.doLogin(cam_name);
         });
 
@@ -98,8 +161,8 @@ export class LoginService {
         return cam_name == "left" ? this.user_left : this.user_right;
     }
 
-    getCookie(cam_name:string) {
-        if(cam_name == "left")
+    getCookie(cam_name: string) {
+        if (cam_name == "left")
             return this.cookie_left;
         return this.cookie_right;
     }
@@ -157,29 +220,55 @@ export class LoginService {
         let cam_name = cameraInputType == CameraInputType.left ? "left" : "right";
         let cam = cameraInputType == CameraInputType.left ? loginComponent.leftCameraInput : loginComponent.rightCameraInput;
         this.current_login_component = loginComponent;
-        let url = `http://${cam.username}:${cam.password}@${cam.ipAddress}/api/acnt/login`;7
+        let url = `http://${cam.ipAddress}`;
 
-        this.checkConnection(url);
+        if (this.login_steps[cam_name] == 0) {
+            this.checkConnection(url);
+            this.login_steps[cam_name]++;
+        }
+
         /*this.checkConnection(url).subscribe(
-            connection => {
-                console.log("finished request")
-                this.doLogin(cameraInputType, loginComponent);
-            },
-            error => {
-                loginComponent.updateLoginErrorStatus(cameraInputType, String(error.status));
-                this.doLogin(cameraInputType, loginComponent);
-            }
-        );*/
+         connection => {
+         console.log("finished request")
+         this.doLogin(cameraInputType, loginComponent);
+         },
+         error => {
+         loginComponent.updateLoginErrorStatus(cameraInputType, String(error.status));
+         this.doLogin(cameraInputType, loginComponent);
+         }
+         );*/
     }
 
     private doLogin(cam_name: string): void {
-        if(cam_name === "left")
+        if (cam_name === "left")
             this.current_login_component.leftCameraReadyToLogIn = true;
         else
             this.current_login_component.rightCameraReadyToLogIn = true;
 
         if (this.current_login_component.leftCameraReadyToLogIn === true && this.current_login_component.rightCameraReadyToLogIn === true) {
             if (this.current_login_component.leftCameraloginErrorStatus == LoginErrorStatus.none && this.current_login_component.rightCameraloginErrorStatus == LoginErrorStatus.none) {
+
+                fs.file('cookies.json');
+                fs.write('cookies.json', {'left': this.cookie_left, 'right': this.cookie_right);
+
+                ipcRenderer.send('request', {
+                    url: 'http://' + this.current_login_component.rightCameraInput.username +
+                    ':' + this.current_login_component.rightCameraInput.password + '@' + this.current_login_component.rightCameraInput.ipAddress + '/api/cam/lv?cmd=start&sz=l',
+                    acid: this.cookie_right.acid,
+                    authlevel: this.cookie_right.authlevel
+                });
+
+                for (var i = 0; i < 1000000; i++) {
+
+                }
+
+                ipcRenderer.send('request', {
+                    url: 'http://' + this.current_login_component.rightCameraInput.username +
+                    ':' + this.current_login_component.rightCameraInput.password + '@' + this.current_login_component.rightCameraInput.ipAddress + '/api/cam/lvgetimg?d=0',
+                    acid: this.cookie_right.acid,
+                    authlevel: this.cookie_right.authlevel
+                });
+
                 this.current_login_component.updateLoginErrorStatus(CameraInputType.left, noLoginErrorMssg);
                 this.current_login_component.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
 
@@ -199,22 +288,26 @@ export class LoginService {
 
                 console.log("Login successful!");
             }
-            else {
-                this.current_login_component.leftCameraReadyToLogIn = false;
-                this.current_login_component.rightCameraReadyToLogIn = false;
+            else
+                {
+                    this.current_login_component.leftCameraReadyToLogIn = false;
+                    this.current_login_component.rightCameraReadyToLogIn = false;
 
-                this.zone.run(() => {
-                    this.loggedIn = false;
-                });
-                console.log("Login failed!");
+                    this.zone.run(() => {
+                        this.loggedIn = false;
+                    });
+                    console.log("Login failed!");
+                }
             }
         }
     }
-}
 
-enum CameraInputType {
-    left,
-    right,
+    enum
+    CameraInputType {
+    left
+,
+    right
+,
 }
 
 enum LoginErrorStatus {

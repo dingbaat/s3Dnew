@@ -18,12 +18,12 @@ export class CameraService {
 
     private liveViewTimer: any;
     private liveViewTimerSubscription: any;
-    private liveViewTimerStartDelay:number = 1000;
-    private liveViewTimerFrequency:number = 500;
+    private liveViewTimerStartDelay: number = 1000;
+    private liveViewTimerFrequency: number = 500;
     private updateLoopTimer: any;
     private updateLoopTimerSubscription: any;
-    private updateLoopTimerStartDelay:number = 0;
-    private updateLoopTimerFrequency:number = 2000;
+    private updateLoopTimerStartDelay: number = 0;
+    private updateLoopTimerFrequency: number = 2000;
     private requestQueue: RequestData[];
 
     private myLoginService: LoginService;
@@ -39,18 +39,32 @@ export class CameraService {
         this.requestQueue = Array();
 
         ipcRenderer.on("response", (event: any, resp: any, body: any) => {
+            console.log(body);
+
+
             let ip = resp.request.href.substring(this.model['left'].generalProperties.protocolWftServer.length + 3);
             ip = ip.substring(0, ip.indexOf("/"));
             let cam_name = this.loginService.getCamNameByIp(ip);
             let query = resp.request.href.substring(resp.request.href.lastIndexOf('/') + 1);
-            let pingQuery = this.model[cam_name].generalProperties.pingCamera+"-"+cam_name;
+            let pingQuery = this.model[cam_name].generalProperties.pingCamera + "-" + cam_name;
 
-            if(decodeURIComponent(query) == pingQuery) {
-                this.parsePingResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
+            try {
+                var image = new Image();
+                image.src = "data:image/png;base64," + body;
+                document.body.appendChild(image);
+                image.id = "camera-image-response";
+                console.log("added image");
+            } catch (h) {
+                console.log(h);
+
             }
-            else {
-                this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
-            }
+
+            /*if(decodeURIComponent(query) == pingQuery) {
+             this.parsePingResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
+             }
+             else {
+             this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
+             }*/
         });
 
         ipcRenderer.on("error", (event: any, msg: any, args: any) => {
@@ -59,9 +73,9 @@ export class CameraService {
             ip = ip.substring(0, ip.indexOf("/"));
             let cam_name = this.loginService.getCamNameByIp(ip);
             let query = args['url'].substring(args['url'].lastIndexOf('/') + 1);
-            let pingQuery = this.model[cam_name].generalProperties.pingCamera+"-"+cam_name;
+            let pingQuery = this.model[cam_name].generalProperties.pingCamera + "-" + cam_name;
 
-            if(decodeURIComponent(query) == pingQuery) {
+            if (decodeURIComponent(query) == pingQuery) {
                 this.zone.run(() => {
                     this.myAppService.showGrowl("error", "No response from " + cam_name + " camera", msg);
                 });
@@ -72,7 +86,12 @@ export class CameraService {
                 });
             }
             this.SetWaitingPropsToFail(this.myLoginService.getCamNameByIp(ip));
-            this.pushToRequestQueue({cam_name: cam_name, requestURL: args, iterations: this.getRequestIterationsByURL(args), state: RequestState.Fail});
+            this.pushToRequestQueue({
+                cam_name: cam_name,
+                requestURL: args,
+                iterations: this.getRequestIterationsByURL(args),
+                state: RequestState.Fail
+            });
         });
 
         this.startUpdateLoopTimer();
@@ -101,10 +120,14 @@ export class CameraService {
     }
 
     private updateLoop(tick: any) {
-        for(let i = 0; i < this.requestQueue.length; i++) {
-            if(this.requestQueue[i].iterations < 4 && this.requestQueue[i].state === RequestState.Pending) {
+        for (let i = 0; i < this.requestQueue.length; i++) {
+            if (this.requestQueue[i].iterations < 4 && this.requestQueue[i].state === RequestState.Pending) {
                 this.requestQueue[i].iterations++;
-                ipcRenderer.send("request", {url: this.requestQueue[i].requestURL, authlevel:this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel, acid:this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid});
+                ipcRenderer.send("request", {
+                    url: this.requestQueue[i].requestURL,
+                    authlevel: this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel,
+                    acid: this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid
+                });
                 console.log("RESENDING REQUEST.........");
             }
             else {
@@ -122,11 +145,11 @@ export class CameraService {
         return this.model[cam_name].adjustableProperties;
     }
 
-    public getLiveViewProps(cam_name: string) :any {
+    public getLiveViewProps(cam_name: string): any {
         let lvprops = Array();
         let adjProps = this.model[cam_name].adjustableProperties;
-        for(let i = 0; i < adjProps.length; i++) {
-            if(adjProps[i].desc == "Liveview" || adjProps[i].desc == "Liveview-Image" ||
+        for (let i = 0; i < adjProps.length; i++) {
+            if (adjProps[i].desc == "Liveview" || adjProps[i].desc == "Liveview-Image" ||
                 adjProps[i].desc == "Record") {
                 lvprops.push(adjProps[i]);
             }
@@ -181,15 +204,15 @@ export class CameraService {
     private pingCamera(cam_name: string) {
         let encodedQuery = encodeURIComponent(`${this.model[cam_name].generalProperties.pingCamera}-${cam_name}`);
         let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
-        this.pushToRequestQueue({cam_name: cam_name,requestURL: url, iterations: 0, state: RequestState.Pending});
+        this.pushToRequestQueue({cam_name: cam_name, requestURL: url, iterations: 0, state: RequestState.Pending});
     }
 
     private sendRequest(cam_name: string, query: string, propDesc: string): void {
         let encodedQuery = query;
 
-        if(propDesc == 'Shutterspeed-Value'){
+        if (propDesc == 'Shutterspeed-Value') {
             var s1 = query.substring(0, query.lastIndexOf('/'));
-            var s2 = query.substring(query.lastIndexOf('/')+1);
+            var s2 = query.substring(query.lastIndexOf('/') + 1);
             encodedQuery = s1 + '%2F' + s2;
             console.log(encodedQuery);
         }
@@ -213,7 +236,7 @@ export class CameraService {
         //this.parseResponseDummy(query, cam_name, url);
     }
 
-    private parseResponseDummy(resp: any, cam_name: string, url:string): void {
+    private parseResponseDummy(resp: any, cam_name: string, url: string): void {
         let query = resp.substring(resp.lastIndexOf("?") + 1);
         let key = query.substring(0, query.indexOf("="));
         let value = query.substring(query.indexOf("=") + 1);
@@ -238,7 +261,7 @@ export class CameraService {
         }
     }
 
-    private parseResponse(host: string, path: any, body: any, url:any) {
+    private parseResponse(host: string, path: any, body: any, url: any) {
         console.log(`[Parse Response | Host: ${host}, Path: ${path}] ${JSON.stringify(body)}`);
 
         let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
@@ -247,7 +270,13 @@ export class CameraService {
         if (body["res"] != null) {
             if (body["res"] == "ok") {
 
-                this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
+                console.log("hier");
+                this.pushToRequestQueue({
+                    cam_name: camName,
+                    requestURL: url,
+                    iterations: this.getRequestIterationsByURL(url),
+                    state: RequestState.Successs
+                });
 
                 for (let item in body) {
 
@@ -289,7 +318,12 @@ export class CameraService {
                     //this.model[camName].currentProperties['Oav'].pv = 20;
                     this.myAppService.showGrowl("error", "Property couldn't be changed", "Operation not allowed");
                     this.SetWaitingPropsToFail(camName);
-                    this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                    this.pushToRequestQueue({
+                        cam_name: camName,
+                        requestURL: url,
+                        iterations: this.getRequestIterationsByURL(url),
+                        state: RequestState.Fail
+                    });
                 });
             }
         } else {
@@ -297,12 +331,17 @@ export class CameraService {
             this.zone.run(() => {
                 this.myAppService.showGrowl("error", "Property couldn't be changed", "There was a network problem. Try again!");
                 this.SetWaitingPropsToFail(camName);
-                this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                this.pushToRequestQueue({
+                    cam_name: camName,
+                    requestURL: url,
+                    iterations: this.getRequestIterationsByURL(url),
+                    state: RequestState.Fail
+                });
             });
         }
     }
 
-    private parsePingResponse(host: string, path: any, body: any, url:any) {
+    private parsePingResponse(host: string, path: any, body: any, url: any) {
         console.log(`[Parse Ping Response | Host: ${host}, Path: ${path}] ${JSON.stringify(body)}`);
 
         let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
@@ -312,18 +351,33 @@ export class CameraService {
             if (body["res"] == "ok") {
                 this.zone.run(() => {
                     this.myAppService.showGrowl("success", "Pinged " + camName + " camera successfully", "Success");
-                    this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Successs});
+                    this.pushToRequestQueue({
+                        cam_name: camName,
+                        requestURL: url,
+                        iterations: this.getRequestIterationsByURL(url),
+                        state: RequestState.Successs
+                    });
                 });
             } else {
                 this.zone.run(() => {
                     this.myAppService.showGrowl("error", "Couldn't ping " + camName + " camera successfully", "Network error");
-                    this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                    this.pushToRequestQueue({
+                        cam_name: camName,
+                        requestURL: url,
+                        iterations: this.getRequestIterationsByURL(url),
+                        state: RequestState.Fail
+                    });
                 });
             }
         } else {
             this.zone.run(() => {
                 this.myAppService.showGrowl("error", "Couldn't ping " + camName + " camera successfully", "Network error");
-                this.pushToRequestQueue({cam_name: camName, requestURL: url, iterations: this.getRequestIterationsByURL(url), state: RequestState.Fail});
+                this.pushToRequestQueue({
+                    cam_name: camName,
+                    requestURL: url,
+                    iterations: this.getRequestIterationsByURL(url),
+                    state: RequestState.Fail
+                });
             });
         }
     }
@@ -381,9 +435,9 @@ export class CameraService {
         }
     }
 
-    private pushToRequestQueue(element:RequestData) {
-        for(let i = 0; i < this.requestQueue.length; i++) {
-            if(element.requestURL === this.requestQueue[i].requestURL) {
+    private pushToRequestQueue(element: RequestData) {
+        for (let i = 0; i < this.requestQueue.length; i++) {
+            if (element.requestURL === this.requestQueue[i].requestURL) {
                 this.requestQueue[i] = element;
                 return;
             }
@@ -391,9 +445,9 @@ export class CameraService {
         this.requestQueue.push(element);
     }
 
-    private getRequestIterationsByURL(url:string) {
-        for(let i = 0; i < this.requestQueue.length; i++) {
-            if(url === this.requestQueue[i].requestURL) {
+    private getRequestIterationsByURL(url: string) {
+        for (let i = 0; i < this.requestQueue.length; i++) {
+            if (url === this.requestQueue[i].requestURL) {
                 return this.requestQueue[i].iterations;
             }
         }
@@ -406,7 +460,7 @@ export class CameraService {
 
     public toggleCameraSidebar(cam_name: string) {
         this.zone.run(() => {
-            if(this.model[cam_name].directiveProperties["sidebarVisisble"] === true)
+            if (this.model[cam_name].directiveProperties["sidebarVisisble"] === true)
                 this.model[cam_name].directiveProperties["sidebarVisisble"] = false;
             else
                 this.model[cam_name].directiveProperties["sidebarVisisble"] = true;
@@ -419,7 +473,7 @@ interface RequestData {
     requestURL: string;
     state: RequestState;
     iterations: number;
-    cam_name:string;
+    cam_name: string;
 }
 
 enum RequestState {

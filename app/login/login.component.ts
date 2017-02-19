@@ -37,6 +37,7 @@ export class LoginComponent {
         this.loginErrorMessages[1] = "Zugriff verweigert. Überprüfe deinen Nutzernamen und das Passwort!";
         this.loginErrorMessages[2] = "Kamera ist nicht erreichbar. Überprüfe die IP-Adresse und deine Netzwerkverbindung!";
         this.loginErrorMessages[3] = "Es ist ein Fehler aufgetreten. Überprüfe deine Daten und versuche es erneut!";
+        this.loginErrorMessages[4] = "Es ist bereits ein Nutzer angemeldet. Versuche es später noch einmal";
     }
 
     private initializeInputs(): void {
@@ -132,6 +133,11 @@ export class LoginComponent {
                     cameraInputType === CameraInputType.left ? this.leftCameraloginErrorStatus = LoginErrorStatus.forbidden : this.rightCameraloginErrorStatus = LoginErrorStatus.forbidden;
                 });
                 break;
+            case "cookieError":
+                this.zone.run(() => {
+                    cameraInputType === CameraInputType.left ? this.leftCameraloginErrorStatus = LoginErrorStatus.cookieError : this.rightCameraloginErrorStatus = LoginErrorStatus.cookieError;
+                });
+                break;
             case "0":
                 this.zone.run(() => {
                     cameraInputType === CameraInputType.left ? this.leftCameraloginErrorStatus = LoginErrorStatus.unreachable : this.rightCameraloginErrorStatus = LoginErrorStatus.unreachable;
@@ -182,9 +188,9 @@ export class LoginComponent {
 
         let valid: boolean = text.trim() !== "";
         if (cameraInputType === CameraInputType.left)
-            textInputType === TextInputType.password ? this.leftCameraInput.passwordValid = valid : this.leftCameraInput.usernameValid = valid
+            textInputType === TextInputType.password ? this.leftCameraInput.passwordValid = valid : this.leftCameraInput.usernameValid = valid;
         else
-            textInputType === TextInputType.password ? this.rightCameraInput.passwordValid = valid : this.rightCameraInput.usernameValid = valid
+            textInputType === TextInputType.password ? this.rightCameraInput.passwordValid = valid : this.rightCameraInput.usernameValid = valid;
     }
 
     public getMasterCamera() {
@@ -216,6 +222,7 @@ enum LoginErrorStatus {
     forbidden,
     unreachable,
     genericError,
+    cookieError,
 }
 
 

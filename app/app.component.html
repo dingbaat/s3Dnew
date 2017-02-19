@@ -1,3 +1,5 @@
+<div class="{{myLoginService.isLoginProcessRunning === true ? 'active' : ''}}" id="loading-overlay"><img src="app/images/loading.svg"/></div>
+
 <p-growl [life]="2000" [value]="this.myAppService.getGrowls()"></p-growl>
 
 <div (window:resize)="onWindowResize($event)"  class="carousel-inner">
@@ -56,8 +58,8 @@
                     </div>
                     <div id="live-view-image-right" class="live-view-image">
                         <liveview
-                            [props]="this.myCameraService.getLiveViewProps('left')"
-                            [cameraName]="'left'">
+                            [props]="this.myCameraService.getLiveViewProps('right')"
+                            [cameraName]="'right'">
                         </liveview>
                     </div>
                 </div>

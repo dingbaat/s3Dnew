@@ -1,5 +1,7 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {DomSanitizer} from '@angular/platform-browser';
 import {CameraService} from "../camera/camera.service";
+import {LoginService} from "../login/login.service";
 import {Model, mapDescToCurrProp, mapCurrPropToDesc, mirrorProps} from "../camera/c300.model";
 import {ipcRenderer} from 'electron';
 
@@ -20,20 +22,33 @@ export class LiveviewComponent {
     propLvToggle: any;
     propLvImage: any;
     liveViewActive:boolean = false;
-    liveViewSource:string = "";
+    liveViewSource:any;
 
     @Output()
     propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
 
     checked: boolean;
 
-    constructor(public myCameraService:CameraService) {
+    constructor(private myLoginService: LoginService, public myCameraService:CameraService, private sanitizer: DomSanitizer) {
 
+        console.log("LV:" + this.cameraName);
         this.checked = false;
 
+
         ipcRenderer.on("lvResponse", (event: any, resp: any, body: any) => {
-            let img = new Image();
-            this.liveViewSource = URL.createObjectURL(new Blob([body], {type: 'image/jpeg'}));
+            let ip = resp.request.href.substring(("http://").length);
+            ip = ip.substring(0, ip.indexOf("/"));
+
+            if(this.cameraName == myLoginService.getCamNameByIp(ip)) {
+                let img = new Image();
+                let url = URL.createObjectURL(new Blob([body], {type: 'image/jpeg'}));
+                this.liveViewSource = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+            }
+
+            console.log(myLoginService.getCamNameByIp(ip))
+            console.log(this.cameraName + ":");
+            console.log("parsedImage");
+
         });
     }
 
@@ -97,6 +112,7 @@ export class LiveviewComponent {
     }
 
     public changeProperty(args: string[]): void {
+        console.log(this.cameraName);
         this.myCameraService.changeProperty(this.cameraName, args[0], args[1]);
     }
 

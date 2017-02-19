@@ -1,11 +1,14 @@
 
 <!--<h3>Live Views:</h3>-->
 <div class="trans-live-view">
-    <img src="{{this.liveViewActive === true ? this.liveViewSource : './app/images/stereo-test-image.png'}}">
+    <img *ngIf="myCameraService.isLiveViewActive(cameraName) == 'true'" [src]="this.liveViewSource">
+    <img *ngIf="myCameraService.isLiveViewActive(cameraName) != 'true'" src="./app/images/stereo-test-image.png">
 </div>
 
 <div class="split-live-view">
-    <img src="./app/images/stereo-test-image.png">
+    {{this.myCameraService.isLiveViewActive(cameraName)}}
+    <img *ngIf="myCameraService.isLiveViewActive(cameraName) == 'true'" [src]="this.liveViewSource">
+    <img *ngIf="myCameraService.isLiveViewActive(cameraName) != 'true'" src="./app/images/stereo-test-image.png">
 </div>
 
 

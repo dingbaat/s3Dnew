@@ -27,6 +27,7 @@ export class LoginService {
     private cookie_right: any;
     private current_login_component: LoginComponent;
     public loggedIn: boolean = false;
+    public isLoginProcessRunning:boolean = false;
 
     private myNetworkService: NetworkService;
 
@@ -112,6 +113,7 @@ export class LoginService {
 
                     this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("cookieError"));
                     this.login_steps[cam_name] = 0;
+                    this.isLoginProcessRunning = false;
                 }
             }
 
@@ -229,6 +231,7 @@ export class LoginService {
     }
 
     private doLogin(cam_name: string): void {
+
         if (cam_name === "left")
             this.current_login_component.leftCameraReadyToLogIn = true;
         else
@@ -236,10 +239,6 @@ export class LoginService {
 
         if (this.current_login_component.leftCameraReadyToLogIn === true && this.current_login_component.rightCameraReadyToLogIn === true) {
             if (this.current_login_component.leftCameraloginErrorStatus == LoginErrorStatus.none && this.current_login_component.rightCameraloginErrorStatus == LoginErrorStatus.none) {
-
-                fs.file('cookies.json');
-                fs.write('cookies.json', {'left': this.cookie_left, 'right': this.cookie_right});
-
                 this.current_login_component.updateLoginErrorStatus(CameraInputType.left, noLoginErrorMssg);
                 this.current_login_component.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
 
@@ -269,11 +268,11 @@ export class LoginService {
                 console.log("Login failed!");
             }
         }
+        this.isLoginProcessRunning = false;
     }
 }
 
-enum
-CameraInputType {
+enum CameraInputType {
     left
         ,
     right

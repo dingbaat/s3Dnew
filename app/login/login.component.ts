@@ -61,6 +61,7 @@ export class LoginComponent {
 
     public handleLogin(): void {
         console.log("trying to login....");
+        this.myLoginService.isLoginProcessRunning = true;
 
         let valid: boolean = this.validate();
 

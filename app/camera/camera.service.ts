@@ -16,14 +16,18 @@ export class CameraService {
 
     private model = {"left": new Model(), "right": new Model()};
 
-    private liveViewTimer: any;
-    private liveViewTimerSubscription: any;
-    private liveViewTimerStartDelay: number = 1000;
-    private liveViewTimerFrequency: number = 500;
     private updateLoopTimer: any;
     private updateLoopTimerSubscription: any;
     private updateLoopTimerStartDelay: number = 0;
     private updateLoopTimerFrequency: number = 2000;
+
+    private leftLiveViewTimer: any;
+    private leftLiveViewTimerSubscription: any;
+    private rightLiveViewTimer: any;
+    private rightLiveViewTimerSubscription: any;
+    private liveViewTimerStartDelay: number = 1000;
+    private liveViewTimerFrequency: number = 1000;
+
     private requestQueue: RequestData[];
 
     private myLoginService: LoginService;
@@ -50,17 +54,40 @@ export class CameraService {
             if (decodeURIComponent(query) == pingQuery) {
                 this.parsePingResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
             } else if (decodeURIComponent(query) == 'lv?cmd=start&sz=l') {
-                if (body['res']) {
-                    if (body['res'] == 'ok') {
+                let parsedBody = JSON.parse(body);
+
+                if (parsedBody['res'] != null) {
+                    if (parsedBody['res'] == 'ok') {
+
+                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Success});
+
+                        console.log("Resp is okay");
                         this.model[cam_name].currentProperties['lv'].val = 'true';
+                        this.startLiveViewTimer(cam_name);
                     }
+                    else {
+                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
+                    }
+                }
+                else {
+                    this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
                 }
             }
             else if (decodeURIComponent(query) == 'lv?cmd=stop') {
-                if (body['res']) {
-                    if (body['res'] == 'ok') {
+                let parsedBody = JSON.parse(body);
+
+                if (parsedBody['res']) {
+                    if (parsedBody['res'] == 'ok') {
                         this.model[cam_name].currentProperties['lv'].val = 'false';
+                        this.stopLiveViewTimer(cam_name);
+                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Successs});
                     }
+                    else {
+                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
+                    }
+                }
+                else {
+                    this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
                 }
             }
             else {
@@ -98,17 +125,31 @@ export class CameraService {
         this.startUpdateLoopTimer();
     }
 
-    public startLiveViewTimer() {
-        this.liveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
-        this.liveViewTimerSubscription = this.liveViewTimer.subscribe(t => this.updateLiveView(t));
+    public startLiveViewTimer(cam_name) {
+        if(cam_name == "left") {
+            this.leftLiveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
+            this.leftLiveViewTimerSubscription = this.leftLiveViewTimer.subscribe(t => this.updateLiveView(t, cam_name));
+        }
+        else {
+            this.rightLiveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
+            this.rightLiveViewTimerSubscription = this.rightLiveViewTimer.subscribe(t => this.updateLiveView(t, cam_name));
+        }
     }
 
-    public stopLiveViewTimer() {
-        this.liveViewTimerSubscription.unsubscribe();
+    public stopLiveViewTimer(cam_name) {
+        if(cam_name == "left") {
+            this.leftLiveViewTimerSubscription.unsubscribe();
+        }
+        else {
+            this.rightLiveViewTimerSubscription.unsubscribe();
+        }
     }
 
-    private updateLiveView(tick: any) {
-        console.log(tick);
+    private updateLiveView(tick: any, cam_name: string) {
+        console.log("update:" + cam_name);
+        let query = "lvgetimg?d=0";//`${this.model[cam_name].adjustableProperties.}-${cam_name}`
+        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
+        ipcRenderer.send("lvRequest",  {url: url, authlevel: this.myLoginService.getCookie(cam_name).authlevel, acid: this.myLoginService.getCookie(cam_name).acid});
     }
 
     public startUpdateLoopTimer() {
@@ -168,6 +209,10 @@ export class CameraService {
 
     public getGenProps(cam_name: string): any {
         return this.model[cam_name].generalProperties;
+    }
+
+    public isLiveViewActive(cam_name: string) {
+        return this.model[cam_name].currentProperties['lv'].val;
     }
 
     public getMapDescToCurrProp(): any {

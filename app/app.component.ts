@@ -28,13 +28,13 @@ export class AppComponent {
 
     public onWindowResize(event) {
         let middleColumn = document.getElementById("middle-column");
-        if(middleColumn != null && middleColumn.length <= 0) return;
+        if(this.myLoginService.isLoggedIn() == false || (middleColumn != null && middleColumn.length <= 0)) return;
         middleColumn.removeAttribute("style");
     }
 
     public adaptMiddleColumnSize() {
         let middleColumn = document.getElementById("middle-column");
-        if(middleColumn != null &&  middleColumn.length <= 0) return;
+        if(this.myLoginService.isLoggedIn() == false || (middleColumn != null &&  middleColumn.length <= 0)) return;
         middleColumn.removeAttribute("style");
 
         if(window.matchMedia("(max-width: 1250px)").matches) {

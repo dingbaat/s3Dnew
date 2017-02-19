@@ -41,30 +41,31 @@ export class CameraService {
         ipcRenderer.on("response", (event: any, resp: any, body: any) => {
             console.log(body);
 
-
             let ip = resp.request.href.substring(this.model['left'].generalProperties.protocolWftServer.length + 3);
             ip = ip.substring(0, ip.indexOf("/"));
             let cam_name = this.loginService.getCamNameByIp(ip);
             let query = resp.request.href.substring(resp.request.href.lastIndexOf('/') + 1);
             let pingQuery = this.model[cam_name].generalProperties.pingCamera + "-" + cam_name;
 
-            try {
-                var image = new Image();
-                image.src = "data:image/png;base64," + body;
-                document.body.appendChild(image);
-                image.id = "camera-image-response";
-                console.log("added image");
-            } catch (h) {
-                console.log(h);
-
+            if (decodeURIComponent(query) == pingQuery) {
+                this.parsePingResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
+            } else if (decodeURIComponent(query) == 'lv?cmd=start&sz=l') {
+                if (body['res']) {
+                    if (body['res'] == 'ok') {
+                        this.model[cam_name].currentProperties['lv'].val = 'true';
+                    }
+                }
             }
-
-            /*if(decodeURIComponent(query) == pingQuery) {
-             this.parsePingResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
-             }
-             else {
-             this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
-             }*/
+            else if (decodeURIComponent(query) == 'lv?cmd=stop') {
+                if (body['res']) {
+                    if (body['res'] == 'ok') {
+                        this.model[cam_name].currentProperties['lv'].val = 'false';
+                    }
+                }
+            }
+            else {
+                this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
+            }
         });
 
         ipcRenderer.on("error", (event: any, msg: any, args: any) => {
@@ -270,7 +271,6 @@ export class CameraService {
         if (body["res"] != null) {
             if (body["res"] == "ok") {
 
-                console.log("hier");
                 this.pushToRequestQueue({
                     cam_name: camName,
                     requestURL: url,

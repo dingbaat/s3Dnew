@@ -1,6 +1,7 @@
 import {Component, Input, Output, EventEmitter} from "@angular/core";
 import {CameraService} from "../camera/camera.service";
 import {Model, mapDescToCurrProp, mapCurrPropToDesc, mirrorProps} from "../camera/c300.model";
+import {ipcRenderer} from 'electron';
 
 @Component({
     moduleId: module.id,
@@ -18,6 +19,8 @@ export class LiveviewComponent {
 
     propLvToggle: any;
     propLvImage: any;
+    liveViewActive:boolean = false;
+    liveViewSource:string = "";
 
     @Output()
     propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
@@ -27,6 +30,11 @@ export class LiveviewComponent {
     constructor(public myCameraService:CameraService) {
 
         this.checked = false;
+
+        ipcRenderer.on("lvResponse", (event: any, resp: any, body: any) => {
+            let img = new Image();
+            this.liveViewSource = URL.createObjectURL(new Blob([body], {type: 'image/jpeg'}));
+        });
     }
 
     ngOnInit() {

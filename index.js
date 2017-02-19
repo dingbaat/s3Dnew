@@ -62,6 +62,34 @@ function init() {
         })
     })
 
+
+    ipcMain.on('lvRequest', function (event, args) {
+
+        var options = {
+            url: args['url'],
+            headers: {
+                'Cookie': 'acid=' + args['acid']+';'+ 'authLevel=' + args['authlevel']
+            },
+            followRedirect: false,
+            encoding: null
+        };
+
+        request(options, function (error, response, body) {
+
+            if (error) {
+                if (msg = errorMap[error.code]) {
+                    event.sender.send("error", msg, args);
+                } else {
+                    event.sender.send("error", `There is a network problem (${error.code})`, args);
+                }
+            } else if (response.statusCode != 200) {
+                event.sender.send("error", `${response.statusCode}: ${response.statusMessage}`, args);
+            } else {
+                event.sender.send("lvResponse", response, body);
+            }
+        })
+    })
+
     ipcMain.on('loginRequest', function (event, args) {
 
         var options = {

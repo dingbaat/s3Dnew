@@ -52,11 +52,12 @@ export class Model {
         "protocolWftServer": "http",
         "queryPropState": "getprop?r=",
         "queryAllPropsStates": "getcurprop?seq=0",
-        "pingCamera" : "ping=0",
+        "pingCamera": "ping=0",
     }
 
     currentProperties = {
         "blank": {"val": "", "state": ""},
+        "lv": {"val": "false", "state": "success"},
         "seq": {"val": 2, "state": "success"},
         "mode": {"val": "Ctrl", "state": "success"},
         "rec": {"val": "off", "state": "success"},

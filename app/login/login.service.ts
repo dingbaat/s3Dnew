@@ -226,17 +226,6 @@ export class LoginService {
             this.checkConnection(url);
             this.login_steps[cam_name]++;
         }
-
-        /*this.checkConnection(url).subscribe(
-         connection => {
-         console.log("finished request")
-         this.doLogin(cameraInputType, loginComponent);
-         },
-         error => {
-         loginComponent.updateLoginErrorStatus(cameraInputType, String(error.status));
-         this.doLogin(cameraInputType, loginComponent);
-         }
-         );*/
     }
 
     private doLogin(cam_name: string): void {
@@ -249,25 +238,7 @@ export class LoginService {
             if (this.current_login_component.leftCameraloginErrorStatus == LoginErrorStatus.none && this.current_login_component.rightCameraloginErrorStatus == LoginErrorStatus.none) {
 
                 fs.file('cookies.json');
-                fs.write('cookies.json', {'left': this.cookie_left, 'right': this.cookie_right);
-
-                ipcRenderer.send('request', {
-                    url: 'http://' + this.current_login_component.rightCameraInput.username +
-                    ':' + this.current_login_component.rightCameraInput.password + '@' + this.current_login_component.rightCameraInput.ipAddress + '/api/cam/lv?cmd=start&sz=l',
-                    acid: this.cookie_right.acid,
-                    authlevel: this.cookie_right.authlevel
-                });
-
-                for (var i = 0; i < 1000000; i++) {
-
-                }
-
-                ipcRenderer.send('request', {
-                    url: 'http://' + this.current_login_component.rightCameraInput.username +
-                    ':' + this.current_login_component.rightCameraInput.password + '@' + this.current_login_component.rightCameraInput.ipAddress + '/api/cam/lvgetimg?d=0',
-                    acid: this.cookie_right.acid,
-                    authlevel: this.cookie_right.authlevel
-                });
+                fs.write('cookies.json', {'left': this.cookie_left, 'right': this.cookie_right});
 
                 this.current_login_component.updateLoginErrorStatus(CameraInputType.left, noLoginErrorMssg);
                 this.current_login_component.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
@@ -288,26 +259,25 @@ export class LoginService {
 
                 console.log("Login successful!");
             }
-            else
-                {
-                    this.current_login_component.leftCameraReadyToLogIn = false;
-                    this.current_login_component.rightCameraReadyToLogIn = false;
+            else {
+                this.current_login_component.leftCameraReadyToLogIn = false;
+                this.current_login_component.rightCameraReadyToLogIn = false;
 
-                    this.zone.run(() => {
-                        this.loggedIn = false;
-                    });
-                    console.log("Login failed!");
-                }
+                this.zone.run(() => {
+                    this.loggedIn = false;
+                });
+                console.log("Login failed!");
             }
         }
     }
+}
 
-    enum
-    CameraInputType {
+enum
+CameraInputType {
     left
-,
+        ,
     right
-,
+        ,
 }
 
 enum LoginErrorStatus {

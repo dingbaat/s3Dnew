@@ -1,7 +1,7 @@
 
 <!--<h3>Live Views:</h3>-->
 <div class="trans-live-view">
-    <img src="./app/images/stereo-test-image.png">
+    <img src="{{this.liveViewActive === true ? this.liveViewSource : './app/images/stereo-test-image.png'}}">
 </div>
 
 <div class="split-live-view">

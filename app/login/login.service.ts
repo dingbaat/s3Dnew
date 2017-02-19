@@ -256,6 +256,13 @@ export class LoginService {
                     this.loggedIn = true;
                 });
 
+                ipcRenderer.send('propRequest', {
+                    url: 'http://' + this.current_login_component.leftCameraInput.username +
+                    ':' + this.current_login_component.leftCameraInput.password + '@192.168.1.1/api/cam/getcurprop?seq=0',
+                    acid: this.getCookie("left").acid,
+                    authlevel: null
+                });
+
                 console.log("Login successful!");
             }
             else {
@@ -269,6 +276,7 @@ export class LoginService {
             }
         }
         this.isLoginProcessRunning = false;
+
     }
 }
 

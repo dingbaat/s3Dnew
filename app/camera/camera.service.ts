@@ -21,6 +21,12 @@ export class CameraService {
     private updateLoopTimerStartDelay: number = 0;
     private updateLoopTimerFrequency: number = 2000;
 
+    private currPropTimer: any;
+    private currPropTimerSubscription: any;
+    private currPropTimerStartDelay: number = 0;
+    private currPropTimerFrequency = 1000;
+    private currPropTimerRunning: boolean = false;
+
     private leftLiveViewTimer: any;
     private leftLiveViewTimerSubscription: any;
     private rightLiveViewTimer: any;
@@ -177,6 +183,12 @@ export class CameraService {
                 console.log("REMOVING REQUEST FROM QUEUE.........");
             }
         }
+
+        if(this.myLoginService.isLoggedIn() && !this.currPropTimerRunning){
+            this.startCurrPropTimer();
+            this.currPropTimerRunning = true;
+        }
+
     }
 
     public getIp(cam_name: string): string {
@@ -217,6 +229,29 @@ export class CameraService {
 
     public getMapDescToCurrProp(): any {
         return mapDescToCurrProp;
+    }
+
+    public stopUpdateLoopTimer() {
+        this.updateLoopTimerSubscription.unsubscribe();
+    }
+
+    public startCurrPropTimer() {
+        this.currPropTimer = Observable.timer(this.currPropTimerStartDelay, this.currPropTimerFrequency);
+        this.currPropTimerSubscription = this.currPropTimer.subscribe(t => this.getCameraStatus());
+    }
+
+    private getCameraStatus() {
+
+        ipcRenderer.send("propRequest", {
+            url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}${this.model['left'].generalProperties.queryAllPropsStates}`,
+            authlevel: this.myLoginService.getCookie('left').authlevel,
+            acid: this.myLoginService.getCookie('left').acid
+        });
+        ipcRenderer.send("propRequest", {
+            url: `${this.model['right'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('right')}:${this.myLoginService.getPassword('right')}@${this.getIp('right')}${this.model['right'].generalProperties.pathWftServer}${this.model['right'].generalProperties.queryAllPropsStates}`,
+            authlevel: this.myLoginService.getCookie('right').authlevel,
+            acid: this.myLoginService.getCookie('right').acid
+        })
     }
 
     resetProperty(cam_name: string, args: string[]) {

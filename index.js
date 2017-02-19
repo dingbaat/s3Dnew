@@ -60,7 +60,33 @@ function init() {
                 event.sender.send("response", response, body);
             }
         })
-    })
+    });
+
+    ipcMain.on('propRequest', function (event, args) {
+
+        var options = {
+            url: args['url'],
+            headers: {
+                'Cookie': 'acid=' + args['acid'] + ';brlang=0'
+            },
+
+        };
+
+        request(options, function (error, response, body) {
+
+            if (error) {
+                if (msg = errorMap[error.code]) {
+                    event.sender.send("error", msg, args);
+                } else {
+                    event.sender.send("error", `There is a network problem (${error.code})`, args);
+                }
+            } else if (response.statusCode != 200) {
+                event.sender.send("error", `${response.statusCode}: ${response.statusMessage}`, args);
+            } else {
+                event.sender.send("response", response, body);
+            }
+        })
+    });
 
 
     ipcMain.on('lvRequest', function (event, args) {

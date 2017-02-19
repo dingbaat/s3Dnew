@@ -176,6 +176,7 @@ export class DropdownSliderComponent {
 
     sendPropertyChangeRequest(request: any, type: string) {
 
+        this.propChangeRequested.emit([`getprop?r=${request.key}`, '']);
         this.propChangeRequested.emit([`${this.prop.path}?${request.key}=${request.value}`, `${this.prop.desc}-${type}`]);
     }
 

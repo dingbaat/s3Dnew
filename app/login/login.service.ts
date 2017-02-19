@@ -93,23 +93,6 @@ export class LoginService {
 
                     var cookies = fs.read('cookies.json', 'json');
 
-                    //TODO
-                    if (cam_name == "left") {
-                        ipcRenderer.send('request', {
-                            url: 'http://' + this.current_login_component.leftCameraInput.username +
-                            ':' + this.current_login_component.leftCameraInput.password + '@' + ip + '/api/cam/getcurprop?seq=0',
-                            acid: cookies[cam_name].acid,
-                            authlevel: cookies[cam_name].authlevel
-                        });
-                    }
-                    else {
-                        ipcRenderer.send('request', {
-                            url: 'http://' + this.current_login_component.rightCameraInput.username +
-                            ':' + this.current_login_component.rightCameraInput.password + '@' + ip + '/api/cam/getcurprop?seq=0',
-                            acid: cookies[cam_name].acid,
-                            authlevel: cookies[cam_name].authlevel
-                        });
-                    }
 
                     this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("cookieError"));
                     this.login_steps[cam_name] = 0;

@@ -49,7 +49,6 @@ export class CameraService {
         this.requestQueue = Array();
 
         ipcRenderer.on("response", (event: any, resp: any, body: any) => {
-            console.log(body);
 
             let ip = resp.request.href.substring(this.model['left'].generalProperties.protocolWftServer.length + 3);
             ip = ip.substring(0, ip.indexOf("/"));
@@ -65,18 +64,33 @@ export class CameraService {
                 if (parsedBody['res'] != null) {
                     if (parsedBody['res'] == 'ok') {
 
-                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Success});
+                        this.pushToRequestQueue({
+                            cam_name: cam_name,
+                            requestURL: resp.request.href,
+                            iterations: this.getRequestIterationsByURL(resp.request.href),
+                            state: RequestState.Success
+                        });
 
                         console.log("Resp is okay");
                         this.model[cam_name].currentProperties['lv'].val = 'true';
                         this.startLiveViewTimer(cam_name);
                     }
                     else {
-                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
+                        this.pushToRequestQueue({
+                            cam_name: cam_name,
+                            requestURL: resp.request.href,
+                            iterations: this.getRequestIterationsByURL(resp.request.href),
+                            state: RequestState.Fail
+                        });
                     }
                 }
                 else {
-                    this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
+                    this.pushToRequestQueue({
+                        cam_name: cam_name,
+                        requestURL: resp.request.href,
+                        iterations: this.getRequestIterationsByURL(resp.request.href),
+                        state: RequestState.Fail
+                    });
                 }
             }
             else if (decodeURIComponent(query) == 'lv?cmd=stop') {
@@ -86,18 +100,36 @@ export class CameraService {
                     if (parsedBody['res'] == 'ok') {
                         this.model[cam_name].currentProperties['lv'].val = 'false';
                         this.stopLiveViewTimer(cam_name);
-                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Successs});
+                        this.pushToRequestQueue({
+                            cam_name: cam_name,
+                            requestURL: resp.request.href,
+                            iterations: this.getRequestIterationsByURL(resp.request.href),
+                            state: RequestState.Successs
+                        });
                     }
                     else {
-                        this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
+                        this.pushToRequestQueue({
+                            cam_name: cam_name,
+                            requestURL: resp.request.href,
+                            iterations: this.getRequestIterationsByURL(resp.request.href),
+                            state: RequestState.Fail
+                        });
                     }
                 }
                 else {
-                    this.pushToRequestQueue({cam_name: cam_name,  requestURL: resp.request.href, iterations: this.getRequestIterationsByURL(resp.request.href), state: RequestState.Fail});
+                    this.pushToRequestQueue({
+                        cam_name: cam_name,
+                        requestURL: resp.request.href,
+                        iterations: this.getRequestIterationsByURL(resp.request.href),
+                        state: RequestState.Fail
+                    });
                 }
             }
             else {
+
                 this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
+
+
             }
         });
 
@@ -132,7 +164,7 @@ export class CameraService {
     }
 
     public startLiveViewTimer(cam_name) {
-        if(cam_name == "left") {
+        if (cam_name == "left") {
             this.leftLiveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
             this.leftLiveViewTimerSubscription = this.leftLiveViewTimer.subscribe(t => this.updateLiveView(t, cam_name));
         }
@@ -143,7 +175,7 @@ export class CameraService {
     }
 
     public stopLiveViewTimer(cam_name) {
-        if(cam_name == "left") {
+        if (cam_name == "left") {
             this.leftLiveViewTimerSubscription.unsubscribe();
         }
         else {
@@ -155,7 +187,11 @@ export class CameraService {
         console.log("update:" + cam_name);
         let query = "lvgetimg?d=0";//`${this.model[cam_name].adjustableProperties.}-${cam_name}`
         let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
-        ipcRenderer.send("lvRequest",  {url: url, authlevel: this.myLoginService.getCookie(cam_name).authlevel, acid: this.myLoginService.getCookie(cam_name).acid});
+        ipcRenderer.send("lvRequest", {
+            url: url,
+            authlevel: this.myLoginService.getCookie(cam_name).authlevel,
+            acid: this.myLoginService.getCookie(cam_name).acid
+        });
     }
 
     public startUpdateLoopTimer() {
@@ -184,7 +220,7 @@ export class CameraService {
             }
         }
 
-        if(this.myLoginService.isLoggedIn() && !this.currPropTimerRunning){
+        if (this.myLoginService.isLoggedIn() && !this.currPropTimerRunning) {
             this.startCurrPropTimer();
             this.currPropTimerRunning = true;
         }
@@ -292,9 +328,10 @@ export class CameraService {
         let encodedQuery = query;
 
         if (propDesc == 'Shutterspeed-Value') {
-            var s1 = query.substring(0, query.lastIndexOf('/'));
-            var s2 = query.substring(query.lastIndexOf('/') + 1);
-            encodedQuery = s1 + '%2F' + s2;
+            //var s1 = query.substring(0, query.lastIndexOf('1/'));
+            //var s2 = query.substring(query.lastIndexOf('1/') + 1);
+            //encodedQuery = s1 + '1%2F' + s2;
+            encodedQuery = query.replace("1/", "1%2F");
             console.log(encodedQuery);
         }
         let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
@@ -302,7 +339,11 @@ export class CameraService {
 
         //Set state of currProp to 'waiting'
         this.zone.run(() => {
-            this.model[cam_name].currentProperties[mapDescToCurrProp[propDesc]].state = 'waiting';
+
+
+            if (!(decodeURIComponent(encodedQuery).startsWith('getprop?r='))) {
+                this.model[cam_name].currentProperties[mapDescToCurrProp[propDesc]].state = 'waiting';
+            }
         });
 
         //TODO uncomment for production use
@@ -343,60 +384,74 @@ export class CameraService {
     }
 
     private parseResponse(host: string, path: any, body: any, url: any) {
-        console.log(`[Parse Response | Host: ${host}, Path: ${path}] ${JSON.stringify(body)}`);
+        console.log(`[Parse Response | Host: ${host}, Path: ${path}]`);
 
         let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
         console.log("URL:" + url + " PATH:" + path);
 
-        if (body["res"] != null) {
-            if (body["res"] == "ok") {
+        if (!decodeURIComponent(url).startsWith('getprop?r=')) {
+            if (body["res"] != null) {
+                if (body["res"] == "ok") {
 
-                this.pushToRequestQueue({
-                    cam_name: camName,
-                    requestURL: url,
-                    iterations: this.getRequestIterationsByURL(url),
-                    state: RequestState.Successs
-                });
+                    this.pushToRequestQueue({
+                        cam_name: camName,
+                        requestURL: url,
+                        iterations: this.getRequestIterationsByURL(url),
+                        state: RequestState.Successs
+                    });
 
-                for (let item in body) {
+                    for (let item in body) {
 
-                    //Item is a currentProp
-                    if (this.model[camName].currentProperties[item] != null) {
+                        //Item is a currentProp
+                        if (this.model[camName].currentProperties[item] != null) {
 
-                        //Item is Object
-                        if (typeof body[item] === 'object') {
+                            //Item is Object
+                            if (typeof body[item] === 'object') {
 
-                            for (let subItem in body[item]) {
-                                if (this.model[camName].currentProperties[item][subItem] != body[item][subItem]) {
-                                    console.log(`Change ${item}.${subItem}: ${this.model[camName].currentProperties[item][subItem]} -> ${body[item][subItem]}`);
+                                for (let subItem in body[item]) {
+                                    if (this.model[camName].currentProperties[item][subItem] != body[item][subItem]) {
+                                        console.log(`Change ${item}.${subItem}: ${this.model[camName].currentProperties[item][subItem]} -> ${body[item][subItem]}`);
+                                        this.zone.run(() => {
+                                            this.model[camName].currentProperties[item][subItem] = body[item][subItem];
+                                            this.model[camName].currentProperties[item].state = 'success';
+                                        });
+                                    }
+                                }
+
+                            } else {
+
+                                if (this.model[camName].currentProperties[item].val != body[item]) {
+                                    console.log(`Change ${item}: ${this.model[camName].currentProperties[item].val} -> ${body[item]}`);
                                     this.zone.run(() => {
-                                        this.model[camName].currentProperties[item][subItem] = body[item][subItem];
+                                        this.model[camName].currentProperties[item].val = body[item];
                                         this.model[camName].currentProperties[item].state = 'success';
                                     });
                                 }
+
                             }
 
                         } else {
-
-                            if (this.model[camName].currentProperties[item].val != body[item]) {
-                                console.log(`Change ${item}: ${this.model[camName].currentProperties[item].val} -> ${body[item]}`);
-                                this.zone.run(() => {
-                                    this.model[camName].currentProperties[item].val = body[item];
-                                    this.model[camName].currentProperties[item].state = 'success';
-                                });
-                            }
-
+                            if (item != "res") console.log(`${item} is not a currProp`);
                         }
-
-                    } else {
-                        if (item != "res") console.log(`${item} is not a currProp`);
                     }
+                } else {
+                    console.log(`Camera Response wasn't OK: ${JSON.stringify(body)}`);
+                    this.zone.run(() => {
+                        //this.model[camName].currentProperties['Oav'].pv = 20;
+                        this.myAppService.showGrowl("error", "Property couldn't be changed", "Operation not allowed");
+                        this.SetWaitingPropsToFail(camName);
+                        this.pushToRequestQueue({
+                            cam_name: camName,
+                            requestURL: url,
+                            iterations: this.getRequestIterationsByURL(url),
+                            state: RequestState.Fail
+                        });
+                    });
                 }
             } else {
-                console.log(`Camera Response wasn't OK: ${JSON.stringify(body)}`);
+                console.log(`Camera Response is corrupted`);
                 this.zone.run(() => {
-                    //this.model[camName].currentProperties['Oav'].pv = 20;
-                    this.myAppService.showGrowl("error", "Property couldn't be changed", "Operation not allowed");
+                    this.myAppService.showGrowl("error", "Property couldn't be changed", "There was a network problem. Try again!");
                     this.SetWaitingPropsToFail(camName);
                     this.pushToRequestQueue({
                         cam_name: camName,
@@ -406,18 +461,6 @@ export class CameraService {
                     });
                 });
             }
-        } else {
-            console.log(`Camera Response is corrupted`);
-            this.zone.run(() => {
-                this.myAppService.showGrowl("error", "Property couldn't be changed", "There was a network problem. Try again!");
-                this.SetWaitingPropsToFail(camName);
-                this.pushToRequestQueue({
-                    cam_name: camName,
-                    requestURL: url,
-                    iterations: this.getRequestIterationsByURL(url),
-                    state: RequestState.Fail
-                });
-            });
         }
     }
 

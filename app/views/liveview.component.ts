@@ -4,6 +4,7 @@ import {CameraService} from "../camera/camera.service";
 import {LoginService} from "../login/login.service";
 import {Model, mapDescToCurrProp, mapCurrPropToDesc, mirrorProps} from "../camera/c300.model";
 import {ipcRenderer} from 'electron';
+import {Injectable, NgZone} from '@angular/core';
 
 @Component({
     moduleId: module.id,
@@ -23,16 +24,18 @@ export class LiveviewComponent {
     propLvImage: any;
     liveViewActive:boolean = false;
     liveViewSource:any;
+    private zone: NgZone;
 
     @Output()
     propChangeRequested: EventEmitter<string> = new EventEmitter<string>();
 
     checked: boolean;
 
-    constructor(private myLoginService: LoginService, public myCameraService:CameraService, private sanitizer: DomSanitizer) {
+    constructor(private myLoginService: LoginService, public myCameraService:CameraService, private sanitizer: DomSanitizer, zone: NgZone) {
 
         console.log("LV:" + this.cameraName);
         this.checked = false;
+        this.zone = zone;
 
 
         ipcRenderer.on("lvResponse", (event: any, resp: any, body: any) => {
@@ -42,12 +45,12 @@ export class LiveviewComponent {
             if(this.cameraName == myLoginService.getCamNameByIp(ip)) {
                 let img = new Image();
                 let url = URL.createObjectURL(new Blob([body], {type: 'image/jpeg'}));
-                this.liveViewSource = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-            }
+                this.zone.run(() => {
+                    this.liveViewSource = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+                });
 
-            console.log(myLoginService.getCamNameByIp(ip))
-            console.log(this.cameraName + ":");
-            console.log("parsedImage");
+                console.log("parsedImage");
+            }
 
         });
     }

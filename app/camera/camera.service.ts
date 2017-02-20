@@ -32,13 +32,15 @@ export class CameraService {
     private rightLiveViewTimer: any;
     private rightLiveViewTimerSubscription: any;
     private liveViewTimerStartDelay: number = 1000;
-    private liveViewTimerFrequency: number = 1000;
+    private liveViewTimerFrequency: number = 500;
 
     private requestQueue: RequestData[];
 
     private myLoginService: LoginService;
     private myAppService: AppService;
     private zone: NgZone;
+
+    private bla:number =0;
 
 
     constructor(private loginService: LoginService, private appService: AppService, zone: NgZone) {
@@ -68,7 +70,7 @@ export class CameraService {
                             cam_name: cam_name,
                             requestURL: resp.request.href,
                             iterations: this.getRequestIterationsByURL(resp.request.href),
-                            state: RequestState.Success
+                            state: RequestState.Successs
                         });
 
                         console.log("Resp is okay");
@@ -163,7 +165,7 @@ export class CameraService {
         this.startUpdateLoopTimer();
     }
 
-    public startLiveViewTimer(cam_name) {
+    public startLiveViewTimer(cam_name: string) {
         if (cam_name == "left") {
             this.leftLiveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
             this.leftLiveViewTimerSubscription = this.leftLiveViewTimer.subscribe(t => this.updateLiveView(t, cam_name));
@@ -174,7 +176,7 @@ export class CameraService {
         }
     }
 
-    public stopLiveViewTimer(cam_name) {
+    public stopLiveViewTimer(cam_name: string) {
         if (cam_name == "left") {
             this.leftLiveViewTimerSubscription.unsubscribe();
         }
@@ -184,14 +186,38 @@ export class CameraService {
     }
 
     private updateLiveView(tick: any, cam_name: string) {
-        console.log("update:" + cam_name);
-        let query = "lvgetimg?d=0";//`${this.model[cam_name].adjustableProperties.}-${cam_name}`
-        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
-        ipcRenderer.send("lvRequest", {
-            url: url,
-            authlevel: this.myLoginService.getCookie(cam_name).authlevel,
-            acid: this.myLoginService.getCookie(cam_name).acid
-        });
+        if(this.bla%2==0) {
+            this.bla = 0;
+            console.log("update:" + cam_name);
+            var a = new Date;
+            var b = "?d\x3d" + a.getFullYear() + "-" + ("00" + (a.getMonth() + 1)).slice(-2) + "-" + ("00" + a.getDate()).slice(-2) + "T" + ("00" + a.getHours()).slice(-2) + ":" + ("00" + a.getMinutes()).slice(-2) + ":" + ("00" + a.getSeconds()).slice(-2) +
+                ("000" + a.getMilliseconds()).slice(-3);
+
+            let query = "lvgetimg" + b;//`${this.model[cam_name].adjustableProperties.}-${cam_name}`
+            let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
+            console.log(url)
+            ipcRenderer.send("lvRequest", {
+                url: url,
+                authlevel: this.myLoginService.getCookie(cam_name).authlevel,
+                acid: this.myLoginService.getCookie(cam_name).acid
+            });
+        }
+        else {
+            this.bla++;
+            ipcRenderer.send("propRequest", {
+                url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}${this.model['left'].generalProperties.queryAllPropsStates}`,
+                authlevel: this.myLoginService.getCookie('left').authlevel,
+                acid: this.myLoginService.getCookie('left').acid
+            });
+            ipcRenderer.send("propRequest", {
+                url: `${this.model['right'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('right')}:${this.myLoginService.getPassword('right')}@${this.getIp('right')}${this.model['right'].generalProperties.pathWftServer}${this.model['right'].generalProperties.queryAllPropsStates}`,
+                authlevel: this.myLoginService.getCookie('right').authlevel,
+                acid: this.myLoginService.getCookie('right').acid
+            })
+        }
+
+
+
     }
 
     public startUpdateLoopTimer() {
@@ -207,11 +233,21 @@ export class CameraService {
         for (let i = 0; i < this.requestQueue.length; i++) {
             if (this.requestQueue[i].iterations < 4 && this.requestQueue[i].state === RequestState.Pending) {
                 this.requestQueue[i].iterations++;
-                ipcRenderer.send("request", {
-                    url: this.requestQueue[i].requestURL,
-                    authlevel: this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel,
-                    acid: this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid
-                });
+
+                if(this.requestQueue[i].requestURL.includes('start&sz=l')) {
+                    ipcRenderer.send("propRequest", {
+                        url: this.requestQueue[i].requestURL,
+                        authlevel: this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel,
+                        acid: this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid
+                    });
+                } else {
+
+                    ipcRenderer.send("request", {
+                        url: this.requestQueue[i].requestURL,
+                        authlevel: this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel,
+                        acid: this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid
+                    });
+                }
                 console.log("RESENDING REQUEST.........");
             }
             else {
@@ -267,17 +303,13 @@ export class CameraService {
         return mapDescToCurrProp;
     }
 
-    public stopUpdateLoopTimer() {
-        this.updateLoopTimerSubscription.unsubscribe();
-    }
-
     public startCurrPropTimer() {
         this.currPropTimer = Observable.timer(this.currPropTimerStartDelay, this.currPropTimerFrequency);
         this.currPropTimerSubscription = this.currPropTimer.subscribe(t => this.getCameraStatus());
     }
 
     private getCameraStatus() {
-
+/*
         ipcRenderer.send("propRequest", {
             url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}${this.model['left'].generalProperties.queryAllPropsStates}`,
             authlevel: this.myLoginService.getCookie('left').authlevel,
@@ -287,7 +319,7 @@ export class CameraService {
             url: `${this.model['right'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('right')}:${this.myLoginService.getPassword('right')}@${this.getIp('right')}${this.model['right'].generalProperties.pathWftServer}${this.model['right'].generalProperties.queryAllPropsStates}`,
             authlevel: this.myLoginService.getCookie('right').authlevel,
             acid: this.myLoginService.getCookie('right').acid
-        })
+        })*/
     }
 
     resetProperty(cam_name: string, args: string[]) {

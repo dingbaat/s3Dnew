@@ -9,11 +9,14 @@
                title="Synchronization failed: Click to show last synchronized value" (click)="sendPropResetRequest()">
             </i>
         </h3>
+        <!--<span>Sel.Mode:{{selectedMode}}</span>-->
+        <!--<span>Sel.Value:{{selectedValue}}</span>-->
     </div>
 
     <div class="settings-content dropdown-slider">
         <div>
-            <p-dropdown class="upper-dropdown dropdown dropdown-slider-main-dropdown" [options]="modes" [(ngModel)]="selectedMode"
+            <p-dropdown class="upper-dropdown dropdown dropdown-slider-main-dropdown" [options]="modes"
+                        [(ngModel)]="selectedMode"
                         (onChange)="onModeChange()"></p-dropdown>
         </div>
 

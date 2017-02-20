@@ -32,16 +32,16 @@ function init() {
     mainWindow.maximize();
 
     mainWindow.on('closed', function () {
-
         mainWindow = null
     })
+
 
     ipcMain.on('request', function (event, args) {
 
         var options = {
             url: args['url'],
             headers: {
-                'Cookie': 'acid=' + args['acid']+';'+ 'authLevel=' + args['authlevel']
+                'Cookie': 'acid=' + args['acid'] + ';authLevel=' + args['authlevel']
             },
             followRedirect: false
         };
@@ -62,6 +62,7 @@ function init() {
         })
     });
 
+
     ipcMain.on('propRequest', function (event, args) {
 
         var options = {
@@ -69,7 +70,6 @@ function init() {
             headers: {
                 'Cookie': 'acid=' + args['acid'] + ';brlang=0'
             },
-
         };
 
         request(options, function (error, response, body) {
@@ -94,7 +94,7 @@ function init() {
         var options = {
             url: args['url'],
             headers: {
-                'Cookie': 'acid=' + args['acid']+';'+ 'authLevel=' + args['authlevel']
+                'Cookie': 'acid=' + args['acid'] + ';brlang=0'
             },
             followRedirect: false,
             encoding: null
@@ -116,6 +116,7 @@ function init() {
         })
     })
 
+
     ipcMain.on('loginRequest', function (event, args) {
 
         var options = {
@@ -131,13 +132,14 @@ function init() {
                 } else {
                     event.sender.send("loginError", `There is a network problem (${error.code})`, args);
                 }
-            }  else {
+            } else {
                 event.sender.send("loginResponse", response, body);
             }
         })
     })
 
 }
+
 
 app.on('ready', init)
 

@@ -1,4 +1,3 @@
-
 /*--- Grey Base ---*/
 $primaryColorDark: #455A64;
 $primaryColorLight: #607D8B;
@@ -48,7 +47,7 @@ $primaryColorDark: #0097A7;
 $primaryColorLight: #00BCD4;
 $primaryColorSluggish: #B2EBF2;
 //$accentColor: #FF4081;
-$accentColor:#0275d8;
+$accentColor: #0275d8;
 $textWhite: #FFFFFF;
 $textDark: #212121;
 $textSecondary: #757575;
@@ -68,61 +67,66 @@ $pmHeight: 30px;
 /*------------------------------*/
 
 @mixin sidebar-input-widths {
-  width:80%;
-  min-width:70px;
+  width: 80%;
+  min-width: 70px;
 }
+
 @mixin standard-button() {
   transition: background 0.5s ease, color 0.5s ease;
-  background:$accentColor;
-  color:#fff;
-  font-size:$secondaryHeaderFontSize;
+  background: $accentColor;
+  color: #fff;
+  font-size: $secondaryHeaderFontSize;
   text-transform: uppercase;
   border-radius: 0px;
 }
+
 @mixin standard-button-hover() {
   background: $textWhite;
   color: $textDark;
 }
+
 @mixin input-defaults() {
-  outline:none;
+  outline: none;
   border-style: none;
 }
+
 @mixin dropdown-defaults() {
   .dropdown-toggle {
     background: $accentColor;
-    color:$textWhite;
-    border-color:$accentColor;
+    color: $textWhite;
+    border-color: $accentColor;
     @include sidebar-input-widths();
   }
   .caret {
-    color:$textWhite;
+    color: $textWhite;
   }
   .dropdown-menu.collapsed {
-    display:none;
+    display: none;
   }
   .dropdown-menu {
-    background:$textWhite;
-    display:block !important;
+    background: $textWhite;
+    display: block !important;
 
     li {
-      color:$textDark;
+      color: $textDark;
 
       a {
         span {
-          color:$textDark;
+          color: $textDark;
         }
       }
       a:hover {
-        background:$accentColor;
+        background: $accentColor;
       }
     }
   }
 }
+
 @mixin default-range-slider {
   input[type=range] {
     -webkit-appearance: none;
     margin: 18px 0;
-    margin-bottom:11px;
+    margin-bottom: 11px;
     @include sidebar-input-widths();
   }
   input[type=range]:focus {
@@ -144,25 +148,26 @@ $pmHeight: 30px;
     cursor: pointer;
     -webkit-appearance: none;
     margin-top: -7px;
-    background:$accentColor;
+    background: $accentColor;
   }
   input[type=range]:focus::-webkit-slider-runnable-track {
     background: $divider;
   }
 }
+
 @mixin pm-range-defaults() {
   .pm-range-control-button {
-    display:inline-block;
-    width:10%;
-    height:$pmHeight;
-    background:$accentColor;
-    text-align:center;
+    display: inline-block;
+    width: 10%;
+    height: $pmHeight;
+    background: $accentColor;
+    text-align: center;
     overflow: hidden;
     font-size: $standardFontSize;
-    margin:0;
+    margin: 0;
 
     i {
-      margin-top:7px;
+      margin-top: 7px;
     }
   }
   .pm-range-control-button:hover {
@@ -177,18 +182,19 @@ $pmHeight: 30px;
     border-bottom-left-radius: 7px;
   }
   .pm-range-info {
-    display:inline-block;
-    overflow:hidden;
-    width:56%;
+    display: inline-block;
+    overflow: hidden;
+    width: 56%;
     text-align: center;
-    height:$pmHeight;
+    height: $pmHeight;
     background: $divider;
-    color:$textDark;
-    margin-left:0.5%;
-    margin-right:0.5%;
-    padding-top:4px;
+    color: $textDark;
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+    padding-top: 4px;
   }
 }
+
 @mixin bg-video-defaults() {
   position: fixed;
   top: 50%;
@@ -203,25 +209,26 @@ $pmHeight: 30px;
   -webkit-transform: translateX(-50%) translateY(-50%);
   transform: translateX(-50%) translateY(-50%);
   background-size: cover;
-  opacity:0.78;
-  display:none;
+  opacity: 0.78;
+  display: none;
 }
+
 @mixin button-group-defaults() {
   .btn-group {
     .btn {
-      border:1px solid $textDark;
+      border: 1px solid $textDark;
 
       i {
-        color:$textDark;
-        margin-left:7px;
+        color: $textDark;
+        margin-left: 7px;
       }
     }
     .btn.active {
-      background:$accentColor;
-      color:$textWhite;
+      background: $accentColor;
+      color: $textWhite;
 
       i {
-        color:$textWhite;
+        color: $textWhite;
       }
     }
   }
@@ -244,61 +251,66 @@ $pmHeight: 30px;
   cursor: pointer;
 }
 
-
-
 * {
-  font-family:Raleway;
-  color:$textWhite;
+  font-family: Raleway;
+  color: $textWhite;
 }
-html,body {
-  max-width:1920px;
-  min-width:870px;
+
+html, body {
+  max-width: 1920px;
+  min-width: 870px;
 }
+
 html {
-  height:100%;
+  height: 100%;
   min-height: 100%;
 }
+
 input {
-  color:$textDark;
+  color: $textDark;
 }
+
 body, .carousel-inner {
-  min-height:100%;
+  min-height: 100%;
 }
+
 #loading-overlay {
-  display:none;
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:black;
-  opacity:0.75;
-  z-index:9999;
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: black;
+  opacity: 0.75;
+  z-index: 9999;
 
   img {
-    display:block;
-    position:relative;
-    margin:0 auto;
-    top:35%;
+    display: block;
+    position: relative;
+    margin: 0 auto;
+    top: 35%;
   }
 }
+
 #loading-overlay.active {
-  display:block;
+  display: block;
 }
 
 div.login.active {
   video#bgvid-login {
-    display:block;
+    display: block;
   }
 }
+
 div.login {
   background: $primaryColorLight;
-  min-height:100vh;
-  height:50vmax;
+  min-height: 100vh;
+  height: 50vmax;
 
   .ui-radiobutton .ui-radiobutton-box .ui-radiobutton-icon {
-    top:-0.3em !important;
+    top: -0.3em !important;
   }
   .ui-radiobutton .ui-radiobutton-box {
-    margin-top:-4px !important;
+    margin-top: -4px !important;
   }
 
   video#bgvid-login {
@@ -307,8 +319,9 @@ div.login {
 
   .login-container {
     /*min-height:400px;
-    max-height:600px;*/ //not working in chromium
-    height:450px;
+    max-height:600px;*/
+    //not working in chromium
+    height: 450px;
 
     .row {
       height: 100%;
@@ -317,16 +330,16 @@ div.login {
     h1 {
       font-family: Lato;
       font-weight: bold;
-      font-size:52px;
-      color:$textWhite;
+      font-size: 52px;
+      color: $textWhite;
       text-transform: uppercase;
       text-align: center;
-      margin-top:50px;
-      margin-bottom:50px;
+      margin-top: 50px;
+      margin-bottom: 50px;
       img {
         width: 50px;
-        margin-left:25px;
-        margin-top:-7px;
+        margin-left: 25px;
+        margin-top: -7px;
       }
       span {
         font-weight: 400;
@@ -335,8 +348,8 @@ div.login {
 
     .login-submit {
       @include standard-button();
-      margin-top:25px;
-      height:55px;
+      margin-top: 175px;
+      height: 55px;
     }
     .login-submit:hover {
       @include standard-button-hover();
@@ -344,63 +357,64 @@ div.login {
 
     .login-box {
       text-align: center;
-      padding:0;
-      min-height: 400px;
-      height:400px;
+      padding: 0;
+      min-height: 355px;
+      height: 355px;
       background: $textDark;
 
       .camera-login-box {
         float: left;
         width: 50%;
-        height:100%;
-        margin:0;
+        height: 100%;
+        margin: 0;
         padding: 35px 15px;
+        padding-bottom: 0;
         transition: background 0.75s ease, color 0.75s ease;
 
         p, i {
-          color:inherit;
+          color: inherit;
         }
         p.login-error-message {
-          color:$primaryColorLight;
-          margin-left:18.5%;
-          margin-right:2.1%;
-          margin-bottom:7px;
-          display:none;
+          color: $primaryColorLight;
+          margin-left: 18.5%;
+          margin-right: 2.1%;
+          margin-bottom: 7px;
+          display: none;
         }
         p.login-error-message.active {
-          display:block;
+          display: block;
         }
         p.error-message {
-          color:$primaryColorLight;
-          text-align:left;
-          margin-top:5px;
-          margin-left:18.5%;
-          display:none;
+          color: $primaryColorLight;
+          text-align: left;
+          margin-top: 5px;
+          margin-left: 18.5%;
+          display: none;
         }
         p.error-message.active {
-          display:block;
+          display: block;
         }
         h2 {
-          text-align:left;
-          margin-left:16.75%;
-          font-size:$secondaryHeaderFontSize;
+          text-align: left;
+          margin-left: 16.75%;
+          font-size: $secondaryHeaderFontSize;
         }
         .login-input-wrapper {
-          width:100%;
-          margin:25px 0px;
+          width: 100%;
+          margin: 25px 0px;
 
           i {
-            font-size:20px;
-            width:14%;
+            font-size: 20px;
+            width: 14%;
           }
           input {
             @include input-defaults();
             width: 80%;
-            height:40px;
-            padding:10px;
+            height: 40px;
+            padding: 10px;
           }
           input.error {
-            border:3px solid $primaryColorDark;
+            border: 3px solid $primaryColorDark;
           }
         }
 
@@ -412,7 +426,40 @@ div.login {
         background: $textSecondary;
 
         p.error-message {
-          color:$primaryColorDark;
+          color: $primaryColorDark;
+        }
+      }
+
+      .bottom-bar {
+        width: 100%;
+        height: 145px;
+        background: $textDark;
+        clear: both;
+        padding-top: 15px;
+
+        h3 {
+          margin-top: 15px;
+        }
+
+        .camera-rig-dropdown {
+          width: 50%;
+
+          .ui-dropdown {
+            width: 50% !important;
+          }
+
+          li {
+            text-align: center;
+            span {
+              color: $textDark;
+            }
+          }
+          li.ui-state-highlight {
+            span {
+              color: $textWhite;
+            }
+          }
+          @include dropdown-defaults();
         }
       }
 
@@ -422,11 +469,12 @@ div.login {
 
 div.main-page.active {
   video#bgvid-control {
-    display:block;
+    display: block;
   }
 }
+
 div.main-page {
-  height:100%;
+  height: 100%;
 
   video#bgvid-control {
     @include bg-video-defaults();
@@ -435,39 +483,39 @@ div.main-page {
   .topbar {
     background: $textDark;
     border-radius: 0;
-    border:none;
-    color:$textWhite;
-    margin:0;
-    text-align:center;
+    border: none;
+    color: $textWhite;
+    margin: 0;
+    text-align: center;
 
     .sidebarMenu {
-      font-size:30px;
-      color:#fff;
+      font-size: 30px;
+      color: #fff;
       position: absolute;
-      top:9px;
-      z-index:999;
-      display:none;
+      top: 9px;
+      z-index: 999;
+      display: none;
     }
     .sidebarMenu:hover {
       cursor: pointer;
     }
     .sidebarMenu.left {
-      left:14px;
+      left: 14px;
     }
     .sidebarMenu.right {
-      right:14px;
+      right: 14px;
     }
 
     .settings-top-bar {
-      margin:0 auto;
-      margin-top:9px;
+      margin: 0 auto;
+      margin-top: 9px;
 
       button {
-        width:170px;
+        width: 170px;
         background: #fff;
 
         span {
-          color:$textDark;
+          color: $textDark;
         }
       }
       button:hover {
@@ -476,10 +524,10 @@ div.main-page {
       p-toggleButton {
         .ui-button {
           background: #fff;
-          width:170px;
+          width: 170px;
 
           * {
-            color:$textDark;
+            color: $textDark;
           }
         }
       }
@@ -493,17 +541,17 @@ div.main-page {
     .logo-wrapper {
       font-family: Lato;
       font-weight: bold;
-      font-size:$secondaryHeaderFontSize;
+      font-size: $secondaryHeaderFontSize;
       text-align: center;
-      color:$textWhite;
+      color: $textWhite;
       text-transform: uppercase;
-      margin:0;
-      padding:10px 20px;
+      margin: 0;
+      padding: 10px 20px;
 
       img {
         width: 50px;
-        margin-left:25px;
-        margin-top:-7px;
+        margin-left: 25px;
+        margin-top: -7px;
       }
       span {
         font-weight: 400;
@@ -512,19 +560,19 @@ div.main-page {
   }
 
   .content {
-    height:100%;
-    margin:0;
+    height: 100%;
+    margin: 0;
 
     .middle-column {
-      padding:0;
-      margin:0;
-      padding-top:37px;
-      color:$textWhite;
-      background: rgba(33,33,33, 0.6);
-      height:100vh;
+      padding: 0;
+      margin: 0;
+      padding-top: 37px;
+      color: $textWhite;
+      background: rgba(33, 33, 33, 0.6);
+      height: 100vh;
 
       button {
-        background:$accentColor;
+        background: $accentColor;
       }
       button:hover {
         background: darken($accentColor, 10%);
@@ -534,148 +582,155 @@ div.main-page {
         text-align: center;
 
         .live-view-image {
-          min-height:300px;
-          width:48%;
-          display:inline-block;
-          margin-right:1%;
+          min-height: 300px;
+          width: 48%;
+          display: inline-block;
+          margin-right: 1%;
 
           img {
-            width:100%;
+            width: 100%;
           }
 
           .settings-control-bar {
-            width:97%;
-            margin:0 auto;
-            margin-bottom:5px;
-            margin-top:12px;
-            height:45px;
+            width: 97%;
+            margin: 0 auto;
+            margin-bottom: 5px;
+            margin-top: 12px;
+            height: 45px;
 
             .bottom-left, .bottom-right {
-              width:50%;
-              float:left;
-              padding-right:1%;
+              width: 50%;
+              float: left;
+              padding-right: 1%;
 
               .settings-header-wrapper {
-                display:none;
+                display: none;
               }
               toggle {
-                display:inline-block;
+                display: inline-block;
 
                 .settings-content.toggle {
                   > span {
-                    display:none;
+                    display: none;
                   }
                 }
               }
             }
             .bottom-left {
-              text-align:left;
+              text-align: left;
             }
             .bottom-right {
-              text-align:right;
+              text-align: right;
             }
           }
 
           .split-live-view {
-            width:100%;
+            width: 100%;
+
+            img.mirrored {
+              -webkit-transform: scaleX(-1);
+              -webkit-transform: scaleY(-1);
+              transform: scaleX(-1);
+              transform: scaleY(-1);
+            }
           }
           .trans-live-view {
-            margin-top:35px;
-            margin-bottom:35px;
-            width:200%;
-            position:relative;
+            margin-top: 35px;
+            margin-bottom: 35px;
+            width: 200%;
+            position: relative;
 
             img {
-              position:relative;
-              left:0;
-              top:0;
-              width:50%;
-              opacity:0.5;
+              position: relative;
+              left: 0;
+              top: 0;
+              width: 50%;
+              opacity: 0.5;
             }
           }
         }
         #live-view-image-left {
           h3 {
-            width:200%;
+            width: 200%;
             text-align: center;
             text-transform: uppercase;
-            margin-bottom:40px;
+            margin-bottom: 40px;
           }
           .trans-live-view {
             img {
-              left:0;
+              left: 0;
             }
           }
         }
         #live-view-image-right {
           h3 {
-            color:transparent;
-            margin-bottom:40px;
+            color: transparent;
+            margin-bottom: 40px;
           }
           .trans-live-view {
-            right:102.5%;
+            right: 102.5%;
 
             img {
-              left:auto;
-              right:0;
+              left: auto;
+              right: 0;
             }
           }
         }
         .live-view-image:last-child {
-          margin-right:0;
+          margin-right: 0;
         }
       }
     }
 
     .settings-column.active {
-      display:block;
+      display: block;
     }
     .settings-column {
-      height:100%;
-      min-height:100vh;
-      max-height:none;
-      background:$textDark;
-      padding:15px;
+      height: 100%;
+      min-height: 100vh;
+      max-height: none;
+      background: $textDark;
+      padding: 15px;
 
       h2 {
-        font-size:$secondaryHeaderFontSize;
+        font-size: $secondaryHeaderFontSize;
         text-transform: uppercase;
-        margin-bottom:35px;
-        text-align:center;
+        margin-bottom: 35px;
+        text-align: center;
       }
 
       .settings-wrapper {
-        width:100%;
+        width: 100%;
         margin: 0 auto;
-        text-align:center;
+        text-align: center;
 
         .settings-header-wrapper {
           margin: 0 auto;
-          margin-top:20px;
-          margin-bottom:10px;
+          margin-top: 20px;
+          margin-bottom: 10px;
           @include sidebar-input-widths();
 
           h3 {
-            font-size:$tertiaryHeaderFontSize;
+            font-size: $tertiaryHeaderFontSize;
             position: relative;
-            margin-top:0;
-            margin-bottom:0;
-            text-align:left;
+            margin-top: 0;
+            margin-bottom: 0;
+            text-align: left;
 
             i {
-              position:absolute;
-              right:5px;
+              position: absolute;
+              right: 5px;
             }
           }
         }
         .settings-content {
-          width:80%;
-          min-width:70px;
+          width: 80%;
+          min-width: 70px;
           margin: 0 auto;
-          text-align:left;
+          text-align: left;
 
           button {
-            background:$accentColor !important;
+            background: $accentColor !important;
           }
           button:hover {
             background: darken($accentColor, 10%) !important;
@@ -683,51 +738,51 @@ div.main-page {
           .dropdown {
             li {
               span {
-                color:$textDark;
+                color: $textDark;
               }
             }
             li.ui-state-highlight {
               span {
-                color:$textWhite;
+                color: $textWhite;
               }
             }
           }
         }
         .settings-content.slider {
           .slider-backward, .slider-step-backward, .slider-step-forward, .slider-forward {
-            width:12%;
-            margin-right:0 !important;
-            margin-left:0 !important;
+            width: 12%;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
           }
           .slider-backward, .slider-step-forward {
-            margin-right:1%;
+            margin-right: 1%;
           }
           .dropdown {
-            width:43.5%;
-            margin-right:1%;
-            margin-left:1%;
+            width: 43.5%;
+            margin-right: 1%;
+            margin-left: 1%;
 
             .ui-dropdown {
-              width:43.5% !important;
+              width: 43.5% !important;
             }
           }
         }
         .settings-content.dropdown-slider {
           .slider-backward, .slider-step-backward, .slider-step-forward, .slider-forward {
-            width:12%;
-            margin-right:0 !important;
-            margin-left:0 !important;
+            width: 12%;
+            margin-right: 0 !important;
+            margin-left: 0 !important;
           }
           .slider-backward, .slider-step-forward {
-            margin-right:1%;
+            margin-right: 1%;
           }
           .dropdown {
-            width:43.5%;
-            margin-right:1%;
-            margin-left:1%;
+            width: 43.5%;
+            margin-right: 1%;
+            margin-left: 1%;
 
             .ui-dropdown {
-              width:43.5% !important;
+              width: 43.5% !important;
             }
           }
 
@@ -737,16 +792,16 @@ div.main-page {
             margin-bottom: 15px;
 
             .ui-dropdown {
-              width:100% !important;
+              width: 100% !important;
             }
           }
         }
         .settings-content.buttons {
           .single-button {
-            width:100%;
+            width: 100%;
           }
           .plus-minus-button {
-            width:12%;
+            width: 12%;
           }
         }
       }
@@ -757,7 +812,7 @@ div.main-page {
         }
       }
 
-      .white-balance-settings  {
+      .white-balance-settings {
         .white-balance-mode-dropdown {
           @include dropdown-defaults();
         }
@@ -765,12 +820,12 @@ div.main-page {
           text-align: center;
           @include default-range-slider();
           input[type=range] {
-            display:inline-block;
+            display: inline-block;
           }
           p.slider-value-display {
             @include sidebar-input-widths();
-            text-align:center;
-            display:inline-block;
+            text-align: center;
+            display: inline-block;
           }
         }
       }
@@ -783,12 +838,12 @@ div.main-page {
           text-align: center;
           @include default-range-slider();
           input[type=range] {
-            display:inline-block;
+            display: inline-block;
           }
           p.slider-value-display {
             @include sidebar-input-widths();
-            text-align:center;
-            display:inline-block;
+            text-align: center;
+            display: inline-block;
           }
         }
       }
@@ -801,12 +856,12 @@ div.main-page {
           text-align: center;
           @include default-range-slider();
           input[type=range] {
-            display:inline-block;
+            display: inline-block;
           }
           p.slider-value-display {
             @include sidebar-input-widths();
-            text-align:center;
-            display:inline-block;
+            text-align: center;
+            display: inline-block;
           }
         }
       }
@@ -823,7 +878,7 @@ div.main-page {
   }
 }
 
-@media(max-width:1840px) {
+@media(max-width: 1840px) {
   div.main-page {
     .content {
       .settings-column {
@@ -833,14 +888,13 @@ div.main-page {
               //width:10% !important;
             }
 
-
           }
           .settings-content.slider, .settings-content.dropdown-slider {
             .dropdown:not(.upper-dropdown), .dropdown:not(.upper-dropdown) .ui-dropdown {
-              width:38% !important;
+              width: 38% !important;
             }
             .dropdown.upper-dropdown {
-              width:94% !important;
+              width: 94% !important;
             }
           }
         }
@@ -849,49 +903,49 @@ div.main-page {
   }
 }
 
-@media(max-width:1450px) {
+@media(max-width: 1450px) {
   div.main-page {
     .content {
       .settings-column {
-        width:20% !important;
+        width: 20% !important;
       }
       .middle-column {
-        width:60% !important;
+        width: 60% !important;
       }
     }
   }
 }
 
-
-@media(max-width:1250px) {
+@media(max-width: 1250px) {
   div.main-page {
     .topbar {
       .sidebarMenu {
-        display:inline;
+        display: inline;
+
       }
     }
 
     .content {
       .settings-column {
-        position:absolute;
-        top:50px;
-        left:0;
-        width:30% !important;
+        position: absolute;
+        top: 50px;
+        left: 0;
+        width: 30% !important;
         //display:none;
-        z-index:99;
+        z-index: 99;
       }
       .settings-column.inactive {
-        z-index:0;
-        opacity:0;
+        z-index: 0;
+        opacity: 0;
       }
       .settings-column.right-column {
-        left:auto;
-        right:0;
+        left: auto;
+        right: 0;
       }
       .middle-column {
-        width:100% !important;
-        display:block;
-        float:none !important;
+        width: 100% !important;
+        display: block;
+        float: none !important;
       }
     }
   }
@@ -900,8 +954,8 @@ div.main-page {
   }
 }
 
-@media (max-width:992px) {
+@media (max-width: 992px) {
   .login-submit {
-    width:100% !important;
+    width: 100% !important;
   }
 }

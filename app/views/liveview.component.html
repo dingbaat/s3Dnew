@@ -6,8 +6,7 @@
 </div>
 
 <div class="split-live-view">
-    {{this.myCameraService.isLiveViewActive(cameraName)}}
-    <img *ngIf="myCameraService.isLiveViewActive(cameraName) == 'true'" [src]="this.liveViewSource">
+    <img class="{{myCameraService.selectedRigMode == 'MR' && myLoginService.master_camera == cameraName ? 'mirrored' : ''}}" *ngIf="myCameraService.isLiveViewActive(cameraName) == 'true'" [src]="this.liveViewSource">
     <img *ngIf="myCameraService.isLiveViewActive(cameraName) != 'true'" src="./app/images/stereo-test-image.png">
 </div>
 

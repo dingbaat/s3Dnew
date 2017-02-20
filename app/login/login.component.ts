@@ -1,5 +1,6 @@
 import {Component, Input, Output, EventEmitter, Type, NgZone} from "@angular/core";
 import {LoginService} from "./login.service";
+import {CameraService} from "../camera/camera.service";
 import {Component, Input, Output, NgZone} from '@angular/core';
 import 'rxjs/Rx';
 import {AppComponent} from "../app.component";
@@ -25,7 +26,7 @@ export class LoginComponent {
     public leftCameraInput: LoginInputData;
     public rightCameraInput: LoginInputData;
 
-    constructor(zone: NgZone, private myLoginService: LoginService, private app: AppComponent) {
+    constructor(zone: NgZone, private myLoginService: LoginService, private app: AppComponent, private myCameraService: CameraService) {
         this.initializeInputs();
         this.zone = zone;
         this.leftCameraReadyToLogIn = false;

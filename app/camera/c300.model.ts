@@ -34,7 +34,7 @@ export const mapDescToCurrProp = {
     "Whitebalance-Mode": "Owbm",
     "Whitebalance-Value": "Owbv",
     "Slot": "blank",
-    "Autoiris": "pushai",
+    "Autoiris": "blank",
     "Record": "rec",
     "Liveview": "blank",
     "Liveview-Image": "blank"

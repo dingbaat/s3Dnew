@@ -42,5 +42,9 @@
     <p class="login-error-message {{rightCameraloginErrorStatus !== 0 ? 'active' : ''}}"> {{loginErrorMessages[rightCameraloginErrorStatus]}}</p>
     <p-radioButton name="groupname" label="Is Master:" value="right" [(ngModel)]="masterCamera"></p-radioButton>
   </div>
+  <div class="bottom-bar">
+    <h3>Camera Rig Mode:</h3>
+    <p-dropdown class="upper-dropdown dropdown camera-rig-dropdown" [options]="myCameraService.cameraRigModes" [(ngModel)]="myCameraService.selectedRigMode" (onChange)="this.valueOf()"></p-dropdown>
+  </div>
 </div>
 <button (click)="handleLogin()" type="button" class="btn col-md-8 col-md-offset-2 login-submit " href="#mainCarousel" data-slide="next">Login</button>

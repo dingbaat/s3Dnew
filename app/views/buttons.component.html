@@ -2,12 +2,15 @@
 
     <div class="settings-header-wrapper">
         <h3>{{prop.desc}}
-            <i class="fa fa-check-circle success" aria-hidden="true" *ngIf="valueState=='success'"
+
+            <i class="fa fa-check-circle success" aria-hidden="true" *ngIf="valueState=='success' && prop.desc == 'ND'"
                title="All values synchronized"></i>
-            <i class="fa fa-question-circle waiting" aria-hidden="true" *ngIf="valueState=='waiting'"
+            <i class="fa fa-question-circle waiting" aria-hidden="true"
+               *ngIf="valueState=='waiting' && prop.desc == 'ND'"
                title="Waiting for camera response"></i>
-            <i class="fa fa-times-circle fail" aria-hidden="true" *ngIf="valueState=='fail'"
-               title="Synchronization failed: Click to show last synchronized value" (click)="sendPropResetRequest()">
+            <i class="fa fa-times-circle fail" aria-hidden="true" *ngIf="valueState=='fail' && prop.desc == 'ND'"
+               title="Synchronization failed: Click to show last synchronized value"
+               (click)="sendPropResetRequest()">
             </i>
         </h3>
     </div>

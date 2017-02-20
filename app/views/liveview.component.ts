@@ -23,7 +23,7 @@ export class LiveviewComponent {
     propLvToggle: any;
     propLvImage: any;
     liveViewActive:boolean = false;
-    liveViewSource:any;
+    liveViewSource:any = "app/images/stereo-test-image.png";
     private zone: NgZone;
 
     @Output()
@@ -37,19 +37,22 @@ export class LiveviewComponent {
         this.checked = false;
         this.zone = zone;
 
-
         ipcRenderer.on("lvResponse", (event: any, resp: any, body: any) => {
+            console.log("img response");
             let ip = resp.request.href.substring(("http://").length);
             ip = ip.substring(0, ip.indexOf("/"));
 
-            if(this.cameraName == myLoginService.getCamNameByIp(ip)) {
-                let img = new Image();
-                let url = URL.createObjectURL(new Blob([body], {type: 'image/jpeg'}));
-                this.zone.run(() => {
-                    this.liveViewSource = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-                });
 
-                console.log("parsedImage");
+            if(body != null) {
+                if(this.cameraName == myLoginService.getCamNameByIp(ip)) {
+                    let img = new Image();
+                    let url = URL.createObjectURL(new Blob([body], {type: 'image/jpeg'}));
+                    this.zone.run(() => {
+                        this.liveViewSource = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+                    });
+
+                    console.log("parsedImage");
+                }
             }
 
         });
@@ -78,7 +81,6 @@ export class LiveviewComponent {
             value = this.propLvToggle.queries[0].value;
 
             this.propChangeRequested.emit(`${this.propLvToggle.path}?${key}=${value}`);
-            this.startStreamingLvImage();
 
         } else {
 
@@ -91,31 +93,10 @@ export class LiveviewComponent {
             }
 
             this.propChangeRequested.emit(`${this.propLvToggle.path}?${key}=${value}`);
-            this.stopStreamingLvImage();
         }
-
-    }
-
-    getCurrentLvImage() {
-
-        let key = this.propLvImage.queries[0].key;
-        let value = this.propLvImage.queries[0].value;
-
-        //TODO Timer
-        this.propChangeRequested.emit(`${this.propLvImage.path}?${key}=${value}`);
-    }
-
-    startStreamingLvImage() {
-
-        this.getCurrentLvImage();
-    }
-
-    stopStreamingLvImage() {
-
     }
 
     public changeProperty(args: string[]): void {
-        console.log(this.cameraName);
         this.myCameraService.changeProperty(this.cameraName, args[0], args[1]);
     }
 

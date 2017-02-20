@@ -1,7 +1,6 @@
 export const mirrorProps = [
     "rec",
     "nd",
-    "pushai",
     "Owbm",
     "Owbv",
     "Oav",

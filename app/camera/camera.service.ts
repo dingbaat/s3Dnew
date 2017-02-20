@@ -24,23 +24,17 @@ export class CameraService {
     private currPropTimer: any;
     private currPropTimerSubscription: any;
     private currPropTimerStartDelay: number = 0;
-    private currPropTimerFrequency = 1000;
+    private currPropTimerFrequency = 450;
     private currPropTimerRunning: boolean = false;
 
-    private leftLiveViewTimer: any;
-    private leftLiveViewTimerSubscription: any;
-    private rightLiveViewTimer: any;
-    private rightLiveViewTimerSubscription: any;
-    private liveViewTimerStartDelay: number = 1000;
-    private liveViewTimerFrequency: number = 500;
-
     private requestQueue: RequestData[];
+    private lvPropCounter: number = 1;
 
     private myLoginService: LoginService;
     private myAppService: AppService;
     private zone: NgZone;
 
-    private bla:number =0;
+    private bla: number = 0;
 
 
     constructor(private loginService: LoginService, private appService: AppService, zone: NgZone) {
@@ -75,7 +69,6 @@ export class CameraService {
 
                         console.log("Resp is okay");
                         this.model[cam_name].currentProperties['lv'].val = 'true';
-                        this.startLiveViewTimer(cam_name);
                     }
                     else {
                         this.pushToRequestQueue({
@@ -101,7 +94,6 @@ export class CameraService {
                 if (parsedBody['res']) {
                     if (parsedBody['res'] == 'ok') {
                         this.model[cam_name].currentProperties['lv'].val = 'false';
-                        this.stopLiveViewTimer(cam_name);
                         this.pushToRequestQueue({
                             cam_name: cam_name,
                             requestURL: resp.request.href,
@@ -153,7 +145,7 @@ export class CameraService {
                     this.myAppService.showGrowl("error", "Property couldn't be changed", msg);
                 });
             }
-            this.SetWaitingPropsToFail(this.myLoginService.getCamNameByIp(ip));
+            this.SetWaitingPropToFail(this.myLoginService.getCamNameByIp(ip), this.getCurrPropByUrl(args['url']));
             this.pushToRequestQueue({
                 cam_name: cam_name,
                 requestURL: args,
@@ -163,61 +155,6 @@ export class CameraService {
         });
 
         this.startUpdateLoopTimer();
-    }
-
-    public startLiveViewTimer(cam_name: string) {
-        if (cam_name == "left") {
-            this.leftLiveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
-            this.leftLiveViewTimerSubscription = this.leftLiveViewTimer.subscribe(t => this.updateLiveView(t, cam_name));
-        }
-        else {
-            this.rightLiveViewTimer = Observable.timer(this.liveViewTimerStartDelay, this.liveViewTimerFrequency);
-            this.rightLiveViewTimerSubscription = this.rightLiveViewTimer.subscribe(t => this.updateLiveView(t, cam_name));
-        }
-    }
-
-    public stopLiveViewTimer(cam_name: string) {
-        if (cam_name == "left") {
-            this.leftLiveViewTimerSubscription.unsubscribe();
-        }
-        else {
-            this.rightLiveViewTimerSubscription.unsubscribe();
-        }
-    }
-
-    private updateLiveView(tick: any, cam_name: string) {
-        if(this.bla%2==0) {
-            this.bla = 0;
-            console.log("update:" + cam_name);
-            var a = new Date;
-            var b = "?d\x3d" + a.getFullYear() + "-" + ("00" + (a.getMonth() + 1)).slice(-2) + "-" + ("00" + a.getDate()).slice(-2) + "T" + ("00" + a.getHours()).slice(-2) + ":" + ("00" + a.getMinutes()).slice(-2) + ":" + ("00" + a.getSeconds()).slice(-2) +
-                ("000" + a.getMilliseconds()).slice(-3);
-
-            let query = "lvgetimg" + b;//`${this.model[cam_name].adjustableProperties.}-${cam_name}`
-            let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
-            console.log(url)
-            ipcRenderer.send("lvRequest", {
-                url: url,
-                authlevel: this.myLoginService.getCookie(cam_name).authlevel,
-                acid: this.myLoginService.getCookie(cam_name).acid
-            });
-        }
-        else {
-            this.bla++;
-            ipcRenderer.send("propRequest", {
-                url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}${this.model['left'].generalProperties.queryAllPropsStates}`,
-                authlevel: this.myLoginService.getCookie('left').authlevel,
-                acid: this.myLoginService.getCookie('left').acid
-            });
-            ipcRenderer.send("propRequest", {
-                url: `${this.model['right'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('right')}:${this.myLoginService.getPassword('right')}@${this.getIp('right')}${this.model['right'].generalProperties.pathWftServer}${this.model['right'].generalProperties.queryAllPropsStates}`,
-                authlevel: this.myLoginService.getCookie('right').authlevel,
-                acid: this.myLoginService.getCookie('right').acid
-            })
-        }
-
-
-
     }
 
     public startUpdateLoopTimer() {
@@ -234,7 +171,7 @@ export class CameraService {
             if (this.requestQueue[i].iterations < 4 && this.requestQueue[i].state === RequestState.Pending) {
                 this.requestQueue[i].iterations++;
 
-                if(this.requestQueue[i].requestURL.includes('start&sz=l')) {
+                if (this.requestQueue[i].requestURL.includes('start&sz=l')) {
                     ipcRenderer.send("propRequest", {
                         url: this.requestQueue[i].requestURL,
                         authlevel: this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel,
@@ -249,6 +186,9 @@ export class CameraService {
                     });
                 }
                 console.log("RESENDING REQUEST.........");
+            }
+            else if (this.requestQueue[i].iterations >= 4) {
+                this.SetWaitingPropToFail(this.requestQueue[i].cam_name, this.getCurrPropByUrl(this.requestQueue[i].requestURL))
             }
             else {
                 this.requestQueue.splice(i, 1);
@@ -309,17 +249,42 @@ export class CameraService {
     }
 
     private getCameraStatus() {
-/*
-        ipcRenderer.send("propRequest", {
-            url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}${this.model['left'].generalProperties.queryAllPropsStates}`,
-            authlevel: this.myLoginService.getCookie('left').authlevel,
-            acid: this.myLoginService.getCookie('left').acid
-        });
-        ipcRenderer.send("propRequest", {
-            url: `${this.model['right'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('right')}:${this.myLoginService.getPassword('right')}@${this.getIp('right')}${this.model['right'].generalProperties.pathWftServer}${this.model['right'].generalProperties.queryAllPropsStates}`,
-            authlevel: this.myLoginService.getCookie('right').authlevel,
-            acid: this.myLoginService.getCookie('right').acid
-        })*/
+        if(this.lvPropCounter % 11 == 0) {
+            ipcRenderer.send("propRequest", {
+                url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}getcurprop?seq=1`,
+                authlevel: this.myLoginService.getCookie('left').authlevel,
+                acid: this.myLoginService.getCookie('left').acid
+            });
+            ipcRenderer.send("propRequest", {
+                url: `${this.model['right'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('right')}:${this.myLoginService.getPassword('right')}@${this.getIp('right')}${this.model['right'].generalProperties.pathWftServer}getcurprop?seq=1`,
+                authlevel: this.myLoginService.getCookie('right').authlevel,
+                acid: this.myLoginService.getCookie('right').acid
+            });
+        }
+        else if(this.model["left"].currentProperties["lv"].val == 'true' || this.model["right"].currentProperties['lv'].val == 'true') {
+            if(this.model["right"].currentProperties['lv'].val == 'true') {
+                let a = new Date;
+                let b = "?d\x3d" + a.getFullYear() + "-" + ("00" + (a.getMonth() + 1)).slice(-2) + "-" + ("00" + a.getDate()).slice(-2) + "T" + ("00" + a.getHours()).slice(-2) + ":" + ("00" + a.getMinutes()).slice(-2) + ":" + ("00" + a.getSeconds()).slice(-2) + ("000" + a.getMilliseconds()).slice(-3);
+                let cam_name = 'left';
+                let query = "lvgetimg" + b;
+                let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
+                ipcRenderer.send("lvRequest", {url: url, authlevel: this.myLoginService.getCookie(cam_name).authlevel, acid: this.myLoginService.getCookie(cam_name).acid});
+            }
+            if(this.model["left"].currentProperties['lv'].val == 'true') {
+                let a = new Date;
+                let b = "?d\x3d" + a.getFullYear() + "-" + ("00" + (a.getMonth() + 1)).slice(-2) + "-" + ("00" + a.getDate()).slice(-2) + "T" + ("00" + a.getHours()).slice(-2) + ":" + ("00" + a.getMinutes()).slice(-2) + ":" + ("00" + a.getSeconds()).slice(-2) + ("000" + a.getMilliseconds()).slice(-3);
+                let cam_name = 'right';
+                let query = "lvgetimg" + b;
+                let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${query}`;
+                ipcRenderer.send("lvRequest", {url: url, authlevel: this.myLoginService.getCookie(cam_name).authlevel, acid: this.myLoginService.getCookie(cam_name).acid});
+            }
+        }
+
+        this.lvPropCounter++;
+        if(this.lvPropCounter > 12) {
+            this.lvPropCounter = 1;
+        }
+
     }
 
     resetProperty(cam_name: string, args: string[]) {
@@ -378,50 +343,30 @@ export class CameraService {
             }
         });
 
-        //TODO uncomment for production use
-        //var id = setInterval(ipcRenderer.send("request", url), 2000);
-        //ipcRenderer.send("request", {url:url, authlevel:this.myLoginService.getCookie(cam_name).authlevel, acid:this.myLoginService.getCookie(cam_name).acid});
         this.pushToRequestQueue({cam_name: cam_name, requestURL: url, iterations: 0, state: RequestState.Pending});
-
-
-        //TODO comment for production use
-        let testUrl = "http://webuser.hs-furtwangen.de/~hochanda/RemoteStereo/Testdaten.txt/?a=b";
-        //ipcRenderer.send("request", testUrl);
-        //this.parseResponseDummy(query, cam_name, url);
     }
 
-    private parseResponseDummy(resp: any, cam_name: string, url: string): void {
-        let query = resp.substring(resp.lastIndexOf("?") + 1);
+    private getCurrPropByUrl(url: string): string {
+        let query = url.substring(url.lastIndexOf("?") + 1);
         let key = query.substring(0, query.indexOf("="));
         let value = query.substring(query.indexOf("=") + 1);
 
-        //Simulate Network errors
-        let res: string;
-        if (Math.random() > 0.33) {
-            res = "ok";
-        } else {
-            res = "fail";
-            console.log("Simulated Network Error occured");
+        if (key != "nd") {
+            key = "O${key}";
         }
 
-        if (key == "nd") {
-            if (value == "plus") {
-                this.parseResponse(cam_name, 'dummyPath', JSON.parse(`{"res":"${res}", "${key}":"${Number(this.model[cam_name].currentProperties["nd"]["val"]) + 1}"}`), url);
-            } else {
-                this.parseResponse(cam_name, 'dummyPath', JSON.parse(`{"res":"${res}", "${key}":"${this.model[cam_name].currentProperties["nd"]["val"] - 1}"}`), url);
-            }
-        } else {
-            this.parseResponse(cam_name, 'dummyPath', JSON.parse(`{"res":"${res}", "O${key}":{"pv":"${value}","en": 1}}`), url);
-        }
+        return key;
     }
 
     private parseResponse(host: string, path: any, body: any, url: any) {
-        console.log(`[Parse Response | Host: ${host}, Path: ${path}]`);
 
-        let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
-        console.log("URL:" + url + " PATH:" + path);
+        //Skip PropState request
+        if (!path.startsWith('/api/cam/getprop?r=')) {
 
-        if (!decodeURIComponent(url).startsWith('getprop?r=')) {
+            let camName = (host != "left" && host != "right") ? this.myLoginService.getCamNameByIp(host) : host;
+            //console.log("URL:" + url + " PATH:" + path);
+            console.log(`[Parse Response | Host: ${host}, Path: ${path}]`);
+
             if (body["res"] != null) {
                 if (body["res"] == "ok") {
 
@@ -441,7 +386,11 @@ export class CameraService {
                             if (typeof body[item] === 'object') {
 
                                 for (let subItem in body[item]) {
-                                    if (this.model[camName].currentProperties[item][subItem] != body[item][subItem]) {
+                                    if (this.model[camName].currentProperties[item][subItem].toString() == body[item][subItem].toString()) {
+                                        console.log("Prop ist unverändert");
+                                    }
+
+                                    {
                                         console.log(`Change ${item}.${subItem}: ${this.model[camName].currentProperties[item][subItem]} -> ${body[item][subItem]}`);
                                         this.zone.run(() => {
                                             this.model[camName].currentProperties[item][subItem] = body[item][subItem];
@@ -451,8 +400,11 @@ export class CameraService {
                                 }
 
                             } else {
+                                if (this.model[camName].currentProperties[item].val.toString() == body[item].toString()) {
+                                    console.log("Prop ist unverändert");
+                                }
 
-                                if (this.model[camName].currentProperties[item].val != body[item]) {
+                                {
                                     console.log(`Change ${item}: ${this.model[camName].currentProperties[item].val} -> ${body[item]}`);
                                     this.zone.run(() => {
                                         this.model[camName].currentProperties[item].val = body[item];
@@ -471,7 +423,7 @@ export class CameraService {
                     this.zone.run(() => {
                         //this.model[camName].currentProperties['Oav'].pv = 20;
                         this.myAppService.showGrowl("error", "Property couldn't be changed", "Operation not allowed");
-                        this.SetWaitingPropsToFail(camName);
+                        this.SetWaitingPropToFail(camName, this.getCurrPropByUrl(url));
                         this.pushToRequestQueue({
                             cam_name: camName,
                             requestURL: url,
@@ -484,7 +436,7 @@ export class CameraService {
                 console.log(`Camera Response is corrupted`);
                 this.zone.run(() => {
                     this.myAppService.showGrowl("error", "Property couldn't be changed", "There was a network problem. Try again!");
-                    this.SetWaitingPropsToFail(camName);
+                    this.SetWaitingPropToFail(camName, this.getCurrPropByUrl(url));
                     this.pushToRequestQueue({
                         cam_name: camName,
                         requestURL: url,
@@ -537,14 +489,20 @@ export class CameraService {
         }
     }
 
-    private SetWaitingPropsToFail(camName: string) {
+    private SetWaitingPropToFail(camName: string, currProp: string) {
 
-        for (let item in this.model[camName].currentProperties) {
-            if (this.model[camName].currentProperties[item].state == 'waiting') {
-                this.zone.run(() => {
-                    this.model[camName].currentProperties[item].state = 'fail';
-                });
-            }
+        /* for (let item in this.model[camName].currentProperties) {
+         if (this.model[camName].currentProperties[item].state == 'waiting') {
+         this.zone.run(() => {
+         this.model[camName].currentProperties[item].state = 'fail';
+         });
+         }
+         }*/
+
+        if (this.model[camName].currentProperties[currProp]) {
+            this.model[camName].currentProperties[currProp].state = 'fail';
+        } else {
+            console.log("ERROR bei SetWaitingPropToFail: currProp gibts nicht");
         }
     }
 
@@ -562,17 +520,9 @@ export class CameraService {
 
                 for (let key in this.model[master].currentProperties[mirrorProp]) {
 
-                    if (this.model[master].currentProperties[mirrorProp][key] !=
-                        this.model[slave].currentProperties[mirrorProp][key]
-                        && key != "state") {
+                    if (key == "val" || key == "pv") {
 
                         switch (mirrorProp) {
-                            case "rec":
-                                this.sendRequest(slave, "rec?cmd=trig", mapCurrPropToDesc[mirrorProp]);
-                                break;
-                            case "pushai":
-                                this.sendRequest(slave, "drivelens?ai=push", mapCurrPropToDesc[mirrorProp]);
-                                break;
                             case "nd":
                                 let diff = Number(this.model[master].currentProperties[mirrorProp].val) - Number(this.model[slave].currentProperties[mirrorProp].val);
                                 query = diff < 0 ? "drivelens?nd=minus" : "drivelens?nd=plus";
@@ -581,6 +531,7 @@ export class CameraService {
                             default:
                                 value = this.model[master].currentProperties[mirrorProp].pv;
                                 query = `${"setprop"}?${mirrorProp.substring(1)}=${value}`;
+                                this.sendRequest(slave, `getprop?r=${mirrorProp.substring(1)}`, '');
                                 this.sendRequest(slave, query, mapCurrPropToDesc[mirrorProp]);
                                 break;
                         }

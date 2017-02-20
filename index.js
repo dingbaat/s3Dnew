@@ -104,12 +104,12 @@ function init() {
 
             if (error) {
                 if (msg = errorMap[error.code]) {
-                    event.sender.send("error", msg, args);
+                    event.sender.send("lvError", msg, args);
                 } else {
-                    event.sender.send("error", `There is a network problem (${error.code})`, args);
+                    event.sender.send("lvError", `There is a network problem (${error.code})`, args);
                 }
             } else if (response.statusCode != 200) {
-                event.sender.send("error", `${response.statusCode}: ${response.statusMessage}`, args);
+                event.sender.send("lvError", `${response.statusCode}: ${response.statusMessage}`, args);
             } else {
                 event.sender.send("lvResponse", response, body);
             }

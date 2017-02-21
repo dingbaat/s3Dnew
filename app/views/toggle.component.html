@@ -14,12 +14,20 @@
     </div>
 
     <div class="settings-content toggle">
-        <p-toggleButton onLabel="Stop"
+        <p-toggleButton *ngIf="prop.desc != 'Record'" onLabel="Stop"
                         offLabel="Start"
                         onIcon="fa-stop"
                         offIcon="fa-play"
                         [(ngModel)]="checked"
                         (onChange)="sendPropertyChangeRequest()">
+        </p-toggleButton>
+        <p-toggleButton *ngIf="prop.desc == 'Record'" onLabel="Stop"
+                        offLabel="Start"
+                        onIcon="fa-stop"
+                        offIcon="fa-play"
+                        [ngModel]="getMirrorChecked()"
+                        (onChange)="sendPropertyChangeRequest()"
+                        (click)="setRecMirrorActive()">
         </p-toggleButton>
         <span *ngIf="selectedValue != null">{{selectedValue}}</span>
     </div>

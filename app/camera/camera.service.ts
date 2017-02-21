@@ -34,6 +34,8 @@ export class CameraService {
     private requestQueue: RequestData[];
     private lvPropCounter: number = 1;
 
+    public mirrorRecActive = false;
+
     private myLoginService: LoginService;
     private myAppService: AppService;
     private zone: NgZone;
@@ -317,7 +319,7 @@ export class CameraService {
     }
 
     public changeProperty(cam_name: string, query: string, propDesc: string): void {
-        if (this.myAppService.IsMirrored() && !(propDesc.startsWith('Whitebalance') && this.selectedRigMode == 'MR' )) {
+        if (this.myAppService.IsMirrored() && mirrorProps[mapDescToCurrProp[propDesc]] != null && !(propDesc.startsWith('Whitebalance') && this.selectedRigMode == 'MR' )) {
             this.sendRequest('left', query, propDesc);
             this.sendRequest('right', query, propDesc);
         } else {

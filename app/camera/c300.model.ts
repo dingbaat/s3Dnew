@@ -14,11 +14,12 @@ export const mapCurrPropToDesc = {
     "Oav": "Aperture",
     "Ossm": "Shutterspeed-Mode",
     "Ossv": "Shutterspeed-Value",
-    "nd": "ND",
     "Ogcm": "ISO/Gain-Mode",
     "Ogcv": "ISO/Gain-Value",
     "Owbm": "Whitebalance-Mode",
     "Owbv": "Whitebalance-Value",
+    "Ocf": "Slot",
+    "nd": "ND",
     "pushai": "Autoiris",
     "rec": "Record"
 };
@@ -33,7 +34,7 @@ export const mapDescToCurrProp = {
     "ISO/Gain-Value": "Ogcv",
     "Whitebalance-Mode": "Owbm",
     "Whitebalance-Value": "Owbv",
-    "Slot": "blank",
+    "Slot": "Ocf",
     "Autoiris": "blank",
     "Record": "rec",
     "Liveview": "blank",
@@ -44,7 +45,7 @@ export class Model {
 
     directiveProperties = {
         "sidebarVisible": false,
-    }
+    };
 
     generalProperties = {
         "pathWftServer": "/api/cam/",
@@ -52,20 +53,20 @@ export class Model {
         "queryPropState": "getprop?r=",
         "queryAllPropsStates": "getcurprop?seq=0",
         "pingCamera": "ping=0",
-    }
+    };
 
     currentProperties = {
         "blank": {"val": "", "state": ""},
         "lv": {"val": "false", "state": "success"},
         "seq": {"val": 2, "state": "success"},
         "mode": {"val": "Ctrl", "state": "success"},
-        "rec": {"val": "rec", "state": "success"},
+        "rec": {"val": "off", "state": "success"},
         "com": {"val": 6, "state": "success"},
         "batt": {"val": 1, "state": "success"},
         "tc": {"val": "00:00:00:00", "state": "success"},
         "cbtn": {"val": "f0i1af0ai1", "state": "success"},
         "camid": {"val": "Links", "state": "success"},
-        "Ocf": {"sel": "n", "artime": -1, "brtime": -1, "state": "success"},
+        "Ocf": {"sel": "A", "artime": -1, "brtime": -1, "state": "success"},
         "Owbm": {"pv": "Daylight", "en": 1, "state": "success"},
         "Owbv": {"pv": "-1", "en": 1, "state": "success"},
         "Oav": {"pv": "3.5", "en": 1, "state": "success"},
@@ -78,7 +79,7 @@ export class Model {
         "fframe": {"val": "off", "state": "success"},
         "pushai": {"val": "stop", "state": "success"},
         "exdisp": {"val": 0, "state": "success"}
-    }
+    };
 
     adjustableProperties = [
         {
@@ -888,5 +889,5 @@ export class Model {
                 {"key": "d", "value": "0", "name": "Aktuelles Live View Bild"}
             ]
         }
-    ]
+    ];
 }

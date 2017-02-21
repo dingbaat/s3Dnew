@@ -1,6 +1,6 @@
 <!--<button (click)="test()">Test</button>-->
 
-<h2>{{name}} Camera</h2>
+<h2 title="IP: {{myLoginService.getIp(name)}}&#10;User: {{myLoginService.getUser(name)}}">{{name}} Camera</h2>
 
 <div *ngFor="let prop of adjProps">
 
@@ -29,7 +29,7 @@
     <template [ngIf]="prop.type == 'buttons'">
         <buttons
                 [prop]="prop"
-                [selectedValue]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).val"
+                [selectedValue]="prop.desc == 'Slot' ? myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).sel : myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).val"
                 [valueState]="myCameraService.getCurrProp(name, mapDescToCurrProp[prop.desc]).state"
                 (propChangeRequested)="changeProperty($event)"
                 (propResetRequested)="resetProperty($event)">

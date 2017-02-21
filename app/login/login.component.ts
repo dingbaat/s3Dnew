@@ -1,7 +1,6 @@
 import {Component, Input, Output, EventEmitter, Type, NgZone} from "@angular/core";
 import {LoginService} from "./login.service";
 import {CameraService} from "../camera/camera.service";
-import {Component, Input, Output, NgZone} from '@angular/core';
 import 'rxjs/Rx';
 import {AppComponent} from "../app.component";
 
@@ -14,7 +13,6 @@ const noLoginErrorMssg: string = "NOERROR";
 })
 export class LoginComponent {
 
-    private myLoginService: LoginService;
     private zone: NgZone;
     private masterCamera: string = "left";
 
@@ -77,56 +75,56 @@ export class LoginComponent {
     }
 
     /*private doLogin(cameraInputType: CameraInputType): void {
-        cameraInputType === CameraInputType.left ? this.leftCameraReadyToLogIn = true : this.rightCameraReadyToLogIn = true;
+     cameraInputType === CameraInputType.left ? this.leftCameraReadyToLogIn = true : this.rightCameraReadyToLogIn = true;
 
-        if (this.leftCameraReadyToLogIn === true && this.rightCameraReadyToLogIn === true) {
-            if (this.leftCameraloginErrorStatus == LoginErrorStatus.none && this.rightCameraloginErrorStatus == LoginErrorStatus.none) {
-                this.updateLoginErrorStatus(CameraInputType.left, noLoginErrorMssg);
-                this.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
+     if (this.leftCameraReadyToLogIn === true && this.rightCameraReadyToLogIn === true) {
+     if (this.leftCameraloginErrorStatus == LoginErrorStatus.none && this.rightCameraloginErrorStatus == LoginErrorStatus.none) {
+     this.updateLoginErrorStatus(CameraInputType.left, noLoginErrorMssg);
+     this.updateLoginErrorStatus(CameraInputType.right, noLoginErrorMssg);
 
-                //update the stereo-app-component with the valid login credentials for both cameras
-                //this.stereoApp.leftCamera.loginData.ipAddress = this.leftCameraInput.ipAddress;
-                //this.stereoApp.leftCamera.loginData.username = this.leftCameraInput.username;
-                //this.stereoApp.leftCamera.loginData.password = this.leftCameraInput.password;
-                //this.stereoApp.rightCamera.loginData.ipAddress = this.rightCameraInput.ipAddress;
-                //this.stereoApp.rightCamera.loginData.username = this.rightCameraInput.username;
-                //this.stereoApp.rightCamera.loginData.password = this.rightCameraInput.password;
+     //update the stereo-app-component with the valid login credentials for both cameras
+     //this.stereoApp.leftCamera.loginData.ipAddress = this.leftCameraInput.ipAddress;
+     //this.stereoApp.leftCamera.loginData.username = this.leftCameraInput.username;
+     //this.stereoApp.leftCamera.loginData.password = this.leftCameraInput.password;
+     //this.stereoApp.rightCamera.loginData.ipAddress = this.rightCameraInput.ipAddress;
+     //this.stereoApp.rightCamera.loginData.username = this.rightCameraInput.username;
+     //this.stereoApp.rightCamera.loginData.password = this.rightCameraInput.password;
 
 
-                this.zone.run(() => {
-                    this.myLoginService.loggedIn = true;
-                });
+     this.zone.run(() => {
+     this.myLoginService.loggedIn = true;
+     });
 
-                console.log(this.myLoginService.loggedIn)
-                console.log("Login successful!");
-            }
-            else {
-                this.leftCameraReadyToLogIn = false;
-                this.rightCameraReadyToLogIn = false;
+     console.log(this.myLoginService.loggedIn)
+     console.log("Login successful!");
+     }
+     else {
+     this.leftCameraReadyToLogIn = false;
+     this.rightCameraReadyToLogIn = false;
 
-                this.zone.run(() => {
-                    this.myLoginService.loggedIn = false;
-                });
-                console.log("Login failed!");
-            }
-        }
-    }
+     this.zone.run(() => {
+     this.myLoginService.loggedIn = false;
+     });
+     console.log("Login failed!");
+     }
+     }
+     }
 
-    private checkCameraConnection(cameraInputType: CameraInputType) {
+     private checkCameraConnection(cameraInputType: CameraInputType) {
 
-        //let url = cameraInputType === CameraInputType.left ? this.leftCameraInput.ipAddress : this.rightCameraInput.ipAddress;
-        let url = "http://www.google.de";
-        this.myLoginService.checkConnection(url).subscribe(
-            connection => {
-                console.log("finished request")
-                this.doLogin(cameraInputType);
-            },
-            error => {
-                this.updateLoginErrorStatus(cameraInputType, String(error.status));
-                this.doLogin(cameraInputType);
-            }
-        );
-    }*/
+     //let url = cameraInputType === CameraInputType.left ? this.leftCameraInput.ipAddress : this.rightCameraInput.ipAddress;
+     let url = "http://www.google.de";
+     this.myLoginService.checkConnection(url).subscribe(
+     connection => {
+     console.log("finished request")
+     this.doLogin(cameraInputType);
+     },
+     error => {
+     this.updateLoginErrorStatus(cameraInputType, String(error.status));
+     this.doLogin(cameraInputType);
+     }
+     );
+     }*/
 
     public updateLoginErrorStatus(cameraInputType: CameraInputType, errorStatus: string): void {
         switch (errorStatus) {

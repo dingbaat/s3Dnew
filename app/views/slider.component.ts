@@ -1,5 +1,6 @@
 import {Component, Input, Output, EventEmitter, NgZone} from "@angular/core";
 import {AppService} from "../app.service";
+import {LoginService} from "../login/login.service";
 
 @Component({
     moduleId: module.id,
@@ -32,7 +33,7 @@ export class SliderComponent {
     valueState: any;
 
 
-    constructor(private appService: AppService, zone: NgZone) {
+    constructor(private appService: AppService, zone: NgZone, private myLoginService: LoginService) {
         this.myAppService = appService;
         this.zone = zone;
         this.values = [];
@@ -42,6 +43,7 @@ export class SliderComponent {
 
         //Setup Values
         var values = this.prop.queries[0].value;
+        //var values = this.myLoginService.apertureValues;
 
         if (values instanceof Array) {
             for (var value of values) {

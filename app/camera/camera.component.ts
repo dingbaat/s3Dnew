@@ -28,7 +28,13 @@ export class CameraComponent implements OnInit {
     }
 
     ngOnInit() {
+
         this.adjProps = this.myCameraService.getAdjustableProps(this.name);
+
+        //Assign the available aperture values to the model
+        //TODO uncomment
+        //this.adjProps[1].queries[0].value = this.myLoginService.apertureValues;
+
         this.currProps = this.myCameraService.getCurrProps(this.name);
         this.genProps = this.myCameraService.getGenProps(this.name);
         this.mapDescToCurrProp = this.myCameraService.getMapDescToCurrProp();
@@ -40,6 +46,11 @@ export class CameraComponent implements OnInit {
 
     public resetProperty(args: string[]): void {
         this.myCameraService.resetProperty(this.name, args);
+    }
+
+    //TODO löschen
+    test() {
+        this.myCameraService.getCurrProp('left', 'Ocf').sel = "C";
     }
 
 }

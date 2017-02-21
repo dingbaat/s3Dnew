@@ -23,6 +23,7 @@
             '@angular/router': 'npm:@angular/router/bundles/router.umd.js',
             '@angular/forms': 'npm:@angular/forms/bundles/forms.umd.js',
             'primeng': 'npm:primeng',
+            'fsjetpack': 'npm:fs-jetpack/main.js',
 
             // other libraries
             'rxjs': 'npm:rxjs',
@@ -38,6 +39,9 @@
                 defaultExtension: 'js'
             },
             primeng: {
+                defaultExtension: 'js'
+            },
+            fsjetpack: {
                 defaultExtension: 'js'
             }
         }

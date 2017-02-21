@@ -26,7 +26,9 @@ export class LoginService {
     private cookie_right: any;
     private current_login_component: LoginComponent;
     public loggedIn: boolean = true;
-    public isLoginProcessRunning:boolean = false;
+    public isLoginProcessRunning: boolean = false;
+
+    public apertureValues: any;
 
 
     constructor(private http: Http, private zone: NgZone) {
@@ -59,9 +61,10 @@ export class LoginService {
                 console.log(cam_name);
                 console.log(resp.headers);
 
+                //Response includes Cookies
                 if (resp.headers["set-cookie"] && resp.headers["set-cookie"].length > 1) {
 
-                    this.login_steps[cam_name] = 0;
+                    this.login_steps[cam_name]++;
 
                     if (resp.headers["set-cookie"][0].includes("acid")) {
                         acid = resp.headers["set-cookie"][0].substring(resp.headers["set-cookie"][0].indexOf("=") + 1, resp.headers["set-cookie"][0].indexOf(";"));
@@ -76,7 +79,6 @@ export class LoginService {
                         console.log("Cookie errror");
                     }
 
-
                     if (cam_name == "left") {
                         this.cookie_left = {acid: acid, authlevel: authlevel};
                     }
@@ -84,19 +86,35 @@ export class LoginService {
                         this.cookie_right = {acid: acid, authlevel: authlevel};
                     }
 
-                    this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("NOERROR"));
-                    this.doLogin(cam_name);
+                    //Get aperture values
+                    this.checkConnection(`http://${this.current_login_component.leftCameraInput.username}:${this.current_login_component.leftCameraInput.password}@${ip}/api/cam/getprop?r=av`);
+
                 } else {
 
                     var cookies = fs.read('cookies.json', 'json');
-
 
                     this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("cookieError"));
                     this.login_steps[cam_name] = 0;
                     this.isLoginProcessRunning = false;
                 }
-            }
 
+            } else if (this.login_steps[cam_name] == 4) {
+
+                console.log('Available Aperture Values');
+                console.log(body);
+
+                this.login_steps[cam_name] = 0;
+
+                //TODO Key für av values anpassen
+                if (body['res'] && body['ApertureValues']) {
+                    this.apertureValues = body['ApertureValues'];
+                    this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("NOERROR"));
+                    this.doLogin(cam_name);
+                } else {
+                    this.current_login_component.updateLoginErrorStatus(cam_name == "left" ? CameraInputType.left : CameraInputType.right, String("Error"));
+                    this.isLoginProcessRunning = false;
+                }
+            }
 
         });
 
@@ -114,7 +132,6 @@ export class LoginService {
                     this.current_login_component.updateLoginErrorStatus(cameraInputType, String("0"));
                     break;
             }
-
 
             this.doLogin(cam_name);
         });
@@ -230,7 +247,6 @@ export class LoginService {
                 this.ip_right = this.current_login_component.rightCameraInput.ipAddress;
                 this.user_right = this.current_login_component.rightCameraInput.username;
                 this.pass_right = this.current_login_component.rightCameraInput.password;
-
 
                 this.zone.run(() => {
                     this.loggedIn = true;

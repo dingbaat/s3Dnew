@@ -17,6 +17,7 @@ export class CameraService {
 
     private model = {"left": new Model(), "right": new Model()};
     public cameraRigModes: SelectItem[];
+
     @Input()
     public selectedRigMode: string = "SbS";
 
@@ -33,8 +34,6 @@ export class CameraService {
 
     private requestQueue: RequestData[];
     private lvPropCounter: number = 1;
-
-    public mirrorRecActive = false;
 
     private myLoginService: LoginService;
     private myAppService: AppService;
@@ -129,10 +128,7 @@ export class CameraService {
                 }
             }
             else {
-
                 this.parseResponse(resp.request.host, resp.request.path, JSON.parse(body), resp.request.href);
-
-
             }
         });
 
@@ -166,6 +162,55 @@ export class CameraService {
         this.startUpdateLoopTimer();
     }
 
+    public getAdjustableProps(cam_name: string): any {
+        return this.model[cam_name].adjustableProperties;
+    }
+
+    public getCurrProps(cam_name: string): any {
+        return this.model[cam_name].currentProperties;
+    }
+
+    public getCurrProp(cam_name: string, key: string): any {
+        return this.model[cam_name].currentProperties[key];
+    }
+
+    private getCurrPropByUrl(url: string): string {
+        let query = url.substring(url.lastIndexOf("?") + 1);
+        let key = query.substring(0, query.indexOf("="));
+        let value = query.substring(query.indexOf("=") + 1);
+
+        if (key != "nd") {
+            key = `O${key}`;
+        }
+
+        return key;
+    }
+
+    public getGenProps(cam_name: string): any {
+        return this.model[cam_name].generalProperties;
+    }
+
+    public getLiveViewProps(cam_name: string): any {
+        let lvprops = Array();
+        let adjProps = this.model[cam_name].adjustableProperties;
+        for (let i = 0; i < adjProps.length; i++) {
+            if (adjProps[i].desc == "Liveview" || adjProps[i].desc == "Liveview-Image" ||
+                adjProps[i].desc == "Record") {
+                lvprops.push(adjProps[i]);
+            }
+        }
+        return lvprops;
+    }
+
+    public getIp(cam_name: string): string {
+        return this.myLoginService.getIp(cam_name);
+    }
+
+    public getMapDescToCurrProp(): any {
+        return mapDescToCurrProp;
+    }
+
+
     public startUpdateLoopTimer() {
         this.updateLoopTimer = Observable.timer(this.updateLoopTimerStartDelay, this.updateLoopTimerFrequency);
         this.updateLoopTimerSubscription = this.updateLoopTimer.subscribe(t => this.updateLoop(t));
@@ -187,7 +232,6 @@ export class CameraService {
                         acid: this.myLoginService.getCookie(this.requestQueue[i].cam_name).acid
                     });
                 } else {
-
                     ipcRenderer.send("request", {
                         url: this.requestQueue[i].requestURL,
                         authlevel: this.myLoginService.getCookie(this.requestQueue[i].cam_name).authlevel,
@@ -212,52 +256,14 @@ export class CameraService {
 
     }
 
-    public getIp(cam_name: string): string {
-        return this.myLoginService.getIp(cam_name);
-    }
-
-    public getAdjustableProps(cam_name: string): any {
-        return this.model[cam_name].adjustableProperties;
-    }
-
-    public getLiveViewProps(cam_name: string): any {
-        let lvprops = Array();
-        let adjProps = this.model[cam_name].adjustableProperties;
-        for (let i = 0; i < adjProps.length; i++) {
-            if (adjProps[i].desc == "Liveview" || adjProps[i].desc == "Liveview-Image" ||
-                adjProps[i].desc == "Record") {
-                lvprops.push(adjProps[i]);
-            }
-        }
-        return lvprops;
-    }
-
-    public getCurrProps(cam_name: string): any {
-        return this.model[cam_name].currentProperties;
-    }
-
-    public getCurrProp(cam_name: string, key: string): any {
-        return this.model[cam_name].currentProperties[key];
-    }
-
-    public getGenProps(cam_name: string): any {
-        return this.model[cam_name].generalProperties;
-    }
-
-    public isLiveViewActive(cam_name: string) {
-        return this.model[cam_name].currentProperties['lv'].val;
-    }
-
-    public getMapDescToCurrProp(): any {
-        return mapDescToCurrProp;
-    }
-
     public startCurrPropTimer() {
         this.currPropTimer = Observable.timer(this.currPropTimerStartDelay, this.currPropTimerFrequency);
         this.currPropTimerSubscription = this.currPropTimer.subscribe(t => this.getCameraStatus());
     }
 
     private getCameraStatus() {
+
+        //Get all current props
         if (this.lvPropCounter % 11 == 0) {
             ipcRenderer.send("propRequest", {
                 url: `${this.model['left'].generalProperties.protocolWftServer}://${this.myLoginService.getUser('left')}:${this.myLoginService.getPassword('left')}@${this.getIp('left')}${this.model['left'].generalProperties.pathWftServer}getcurprop?seq=1`,
@@ -270,6 +276,7 @@ export class CameraService {
                 acid: this.myLoginService.getCookie('right').acid
             });
         }
+        //Get Liveview Image
         else if (this.model["left"].currentProperties["lv"].val == 'true' || this.model["right"].currentProperties['lv'].val == 'true') {
             if (this.model["right"].currentProperties['lv'].val == 'true') {
                 let a = new Date;
@@ -304,6 +311,7 @@ export class CameraService {
 
     }
 
+
     resetProperty(cam_name: string, args: string[]) {
         for (let item of args) {
 
@@ -319,6 +327,7 @@ export class CameraService {
     }
 
     public changeProperty(cam_name: string, query: string, propDesc: string): void {
+
         if (this.myAppService.IsMirrored() && mirrorProps[mapDescToCurrProp[propDesc]] != null && !(propDesc.startsWith('Whitebalance') && this.selectedRigMode == 'MR' )) {
             this.sendRequest('left', query, propDesc);
             this.sendRequest('right', query, propDesc);
@@ -327,27 +336,12 @@ export class CameraService {
         }
     }
 
-    public pingCameras() {
-        this.pingCamera('left');
-        this.pingCamera('right');
-    }
-
-    private pingCamera(cam_name: string) {
-        let encodedQuery = encodeURIComponent(`${this.model[cam_name].generalProperties.pingCamera}-${cam_name}`);
-        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
-        this.pushToRequestQueue({cam_name: cam_name, requestURL: url, iterations: 0, state: RequestState.Pending});
-    }
-
     private sendRequest(cam_name: string, query: string, propDesc: string): void {
-        let encodedQuery = query;
 
-        if (propDesc == 'Shutterspeed-Value') {
-            //var s1 = query.substring(0, query.lastIndexOf('1/'));
-            //var s2 = query.substring(query.lastIndexOf('1/') + 1);
-            //encodedQuery = s1 + '1%2F' + s2;
-            encodedQuery = query.replace("1/", "1%2F");
-            console.log(encodedQuery);
-        }
+        //Replace '/' with '%2F'
+        let encodedQuery = propDesc == 'Shutterspeed-Value' ? query.replace("1/", "1%2F") : query;
+        //console.log(encodedQuery);
+
         let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
         console.log(`[Request | ${cam_name}] ${url}`);
 
@@ -361,16 +355,65 @@ export class CameraService {
         this.pushToRequestQueue({cam_name: cam_name, requestURL: url, iterations: 0, state: RequestState.Pending});
     }
 
-    private getCurrPropByUrl(url: string): string {
-        let query = url.substring(url.lastIndexOf("?") + 1);
-        let key = query.substring(0, query.indexOf("="));
-        let value = query.substring(query.indexOf("=") + 1);
+    private pushToRequestQueue(element: RequestData) {
+        for (let i = 0; i < this.requestQueue.length; i++) {
+            if (element.requestURL === this.requestQueue[i].requestURL) {
+                this.requestQueue[i] = element;
+                return;
+            }
+        }
+        this.requestQueue.push(element);
+    }
 
-        if (key != "nd") {
-            key = `O${key}`;
+    private getRequestIterationsByURL(url: string) {
+        for (let i = 0; i < this.requestQueue.length; i++) {
+            if (url === this.requestQueue[i].requestURL) {
+                return this.requestQueue[i].iterations;
+            }
+        }
+        return 0;
+    }
+
+    public mirrorProperties() {
+
+        if (!this.myAppService.IsMirrored()) return;
+
+        let master = this.myLoginService.getMasterCamera();
+        let slave = master == 'left' ? 'right' : 'left';
+        let query: string, value: string;
+
+        console.log(`[Mirror Props] ${master} -> ${slave}`);
+
+        for (let mirrorProp of mirrorProps) {
+
+            for (let key in this.model[master].currentProperties[mirrorProp]) {
+
+                //If Spiegelrig is in use, don't mirror whitebalance
+                if (mirrorProp.startsWith("Owb") && this.selectedRigMode == 'MR') continue;
+
+                if (key == "val" || key == "pv") {
+                    switch (mirrorProp) {
+                        case "rec":
+                            if (this.model[master].currentProperties[mirrorProp][key].toString() == "rec" &&
+                                this.model[slave].currentProperties[mirrorProp][key].toString() != "rec")
+                                this.sendRequest(slave, "rec?cmd=trig", mapCurrPropToDesc[mirrorProp]);
+                            break;
+                        case "nd":
+                            let diff = Number(this.model[master].currentProperties[mirrorProp].val) - Number(this.model[slave].currentProperties[mirrorProp].val);
+                            query = diff < 0 ? "drivelens?nd=minus" : "drivelens?nd=plus";
+                            for (let _i = 0; _i < Math.abs(diff); _i++) this.sendRequest(slave, query, mapCurrPropToDesc[mirrorProp]);
+                            break;
+                        default:
+                            value = this.model[master].currentProperties[mirrorProp].pv;
+                            query = `${"setprop"}?${mirrorProp.substring(1)}=${value}`;
+                            this.sendRequest(slave, `getprop?r=${mirrorProp.substring(1)}`, '');
+                            this.sendRequest(slave, query, mapCurrPropToDesc[mirrorProp]);
+                            break;
+                    }
+                }
+            }
         }
 
-        return key;
     }
 
     private parseResponse(host: string, path: any, body: any, url: any) {
@@ -455,6 +498,29 @@ export class CameraService {
         }
     }
 
+    private SetWaitingPropToFail(camName: string, currProp: string) {
+
+        if (this.model[camName].currentProperties[currProp]) {
+            this.zone.run(() => {
+                this.model[camName].currentProperties[currProp].state = 'fail';
+            });
+        } else {
+            console.log(`ERROR bei SetWaitingPropToFail: ${currProp} gibts nicht`);
+        }
+    }
+
+
+    public pingCameras() {
+        this.pingCamera('left');
+        this.pingCamera('right');
+    }
+
+    private pingCamera(cam_name: string) {
+        let encodedQuery = encodeURIComponent(`${this.model[cam_name].generalProperties.pingCamera}-${cam_name}`);
+        let url = `${this.model[cam_name].generalProperties.protocolWftServer}://${this.myLoginService.getUser(cam_name)}:${this.myLoginService.getPassword(cam_name)}@${this.getIp(cam_name)}${this.model[cam_name].generalProperties.pathWftServer}${encodedQuery}`;
+        this.pushToRequestQueue({cam_name: cam_name, requestURL: url, iterations: 0, state: RequestState.Pending});
+    }
+
     private parsePingResponse(host: string, path: any, body: any, url: any) {
         console.log(`[Parse Ping Response | Host: ${host}, Path: ${path}] ${JSON.stringify(body)}`);
 
@@ -496,80 +562,9 @@ export class CameraService {
         }
     }
 
-    private SetWaitingPropToFail(camName: string, currProp: string) {
 
-        /* for (let item in this.model[camName].currentProperties) {
-         if (this.model[camName].currentProperties[item].state == 'waiting') {
-         this.zone.run(() => {
-         this.model[camName].currentProperties[item].state = 'fail';
-         });
-         }
-         }*/
-
-        if (this.model[camName].currentProperties[currProp]) {
-            this.zone.run(() => {
-                this.model[camName].currentProperties[currProp].state = 'fail';
-            });
-        } else {
-            console.log(`ERROR bei SetWaitingPropToFail: ${currProp} gibts nicht`);
-        }
-    }
-
-    public mirrorProperties() {
-
-        if (this.myAppService.IsMirrored()) {
-
-            let master = this.myLoginService.getMasterCamera();
-            let slave = master == 'left' ? 'right' : 'left';
-            let query: string, value: string;
-
-            console.log(`[Mirror Props] ${master} -> ${slave}`);
-
-            for (let mirrorProp of mirrorProps) {
-
-                for (let key in this.model[master].currentProperties[mirrorProp]) {
-
-                    //If Spiegelrig is in use, don't mirror whitebalance
-                    if (mirrorProp.startsWith("Owb") && this.selectedRigMode == 'MR') continue;
-
-                    if (key == "val" || key == "pv") {
-
-                        switch (mirrorProp) {
-                            case "nd":
-                                let diff = Number(this.model[master].currentProperties[mirrorProp].val) - Number(this.model[slave].currentProperties[mirrorProp].val);
-                                query = diff < 0 ? "drivelens?nd=minus" : "drivelens?nd=plus";
-                                for (let _i = 0; _i < Math.abs(diff); _i++) this.sendRequest(slave, query, mapCurrPropToDesc[mirrorProp]);
-                                break;
-                            default:
-                                value = this.model[master].currentProperties[mirrorProp].pv;
-                                query = `${"setprop"}?${mirrorProp.substring(1)}=${value}`;
-                                this.sendRequest(slave, `getprop?r=${mirrorProp.substring(1)}`, '');
-                                this.sendRequest(slave, query, mapCurrPropToDesc[mirrorProp]);
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private pushToRequestQueue(element: RequestData) {
-        for (let i = 0; i < this.requestQueue.length; i++) {
-            if (element.requestURL === this.requestQueue[i].requestURL) {
-                this.requestQueue[i] = element;
-                return;
-            }
-        }
-        this.requestQueue.push(element);
-    }
-
-    private getRequestIterationsByURL(url: string) {
-        for (let i = 0; i < this.requestQueue.length; i++) {
-            if (url === this.requestQueue[i].requestURL) {
-                return this.requestQueue[i].iterations;
-            }
-        }
-        return 0;
+    public isLiveViewActive(cam_name: string) {
+        return this.model[cam_name].currentProperties['lv'].val;
     }
 
     public isCameraSidebarActive(cam_name: string) {

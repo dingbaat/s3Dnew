@@ -10,7 +10,7 @@ import {CameraService} from "./camera/camera.service";
     moduleId: module.id,
     selector: 'app',
     templateUrl: 'app.component.html',
-    styleUrls: ['app.component.css'],
+    styleUrls: [],
 })
 
 export class AppComponent {

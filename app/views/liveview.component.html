@@ -29,14 +29,13 @@
     <div class="bottom-right">
         <div *ngFor="let prop of props">
             <template [ngIf]="prop.type == 'toggle' && prop.desc == 'Record' ">
-                {{prop.desc}}:
-                <toggle
+                <buttons
                         [prop]="prop"
                         [selectedValue]="myCameraService.getCurrProp(cameraName,  this.myCameraService.getMapDescToCurrProp()[prop.desc]).val"
                         [valueState]="myCameraService.getCurrProp(cameraName, this.myCameraService.getMapDescToCurrProp()[prop.desc]).state"
                         (propChangeRequested)="changeProperty($event)"
                         (propResetRequested)="resetProperty($event)">
-                </toggle>
+                </buttons>
             </template>
         </div>
     </div>

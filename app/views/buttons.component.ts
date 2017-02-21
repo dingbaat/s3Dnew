@@ -25,6 +25,11 @@ export class ButtonsComponent {
     propResetRequested: EventEmitter<string[]> = new EventEmitter<string[]>();
 
 
+    capitalize(str: string) {
+        str = str.toString();
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
     sendPropertyChangeRequest(index: number) {
 
         let key = this.prop.queries[index].key;

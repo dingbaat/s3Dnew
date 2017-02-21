@@ -1,8 +1,7 @@
 <div class="settings-wrapper">
 
     <div class="settings-header-wrapper">
-        <h3>{{prop.desc}}
-
+        <h3>{{prop.desc == 'Record' ? '' : prop.desc}}
             <i class="fa fa-check-circle success" aria-hidden="true" *ngIf="valueState=='success' && prop.desc == 'ND'"
                title="All values synchronized"></i>
             <i class="fa fa-question-circle waiting" aria-hidden="true"
@@ -17,15 +16,19 @@
 
     <div class="settings-content buttons">
         <template ngFor let-query="$implicit" [ngForOf]="prop.queries" let-i="index" let-isFirst="first">
-        <span [ngSwitch]="query.name">
+        <span [ngClass]="{'recStateWrapper':prop.desc=='Record'}" [ngSwitch]="query.name">
             <button *ngSwitchCase="'+'" pButton type="button" class="plus-minus-button" icon="fa-plus"
                     (click)="sendPropertyChangeRequest(i)"></button>
             <button *ngSwitchCase="'-'" pButton type="button" class="plus-minus-button" icon="fa-minus"
                     (click)="sendPropertyChangeRequest(i)"></button>
+            <button *ngSwitchCase="'Record'" pButton type="button" class="single-button" label="Rec" icon="fa-circle"
+                    (click)="sendPropertyChangeRequest(i)" [ngClass]="{'recIcon':selectedValue=='rec'}"></button>
             <button *ngSwitchDefault pButton type="button" class="single-button" label={{query.name}}
                     (click)="sendPropertyChangeRequest(i)"></button>
+            <span *ngIf="isFirst && selectedValue != null" [ngClass]="{'recState':prop.desc=='Record'}">
+                {{selectedValue != 'rec' ? capitalize(selectedValue) : 'On'}}
+            </span>
         </span>
-            <span *ngIf="isFirst && selectedValue != null">{{selectedValue}}</span>
         </template>
     </div>
 

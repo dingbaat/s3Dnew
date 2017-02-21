@@ -8,7 +8,6 @@ import {AppComponent} from "./app.component";
 import {LoginComponent} from "./login/login.component";
 import {CameraComponent} from "./camera/camera.component";
 import {ArrayCheckerPipe} from "./utils/array-checker.pipe";
-import {PropertyComponent} from "./views/property.component";
 import {DropdownSliderComponent} from "./views/dropdown_slider.component";
 import {ButtonsComponent} from "./views/buttons.component";
 import {SliderComponent} from "./views/slider.component";
@@ -17,7 +16,6 @@ import {LiveviewComponent} from "./views/liveview.component";
 import {RadioButtonModule, RadioButton} from 'primeng/primeng';
 
 import {LoginService} from "./login/login.service";
-import {NetworkService} from "./utils/network.service";
 import {CameraService} from "./camera/camera.service";
 import {AppService} from "./app.service";
 
@@ -35,7 +33,6 @@ import {
         ArrayCheckerPipe,
         LoginComponent,
         CameraComponent,
-        PropertyComponent,
         DropdownSliderComponent,
         ButtonsComponent,
         SliderComponent,
@@ -51,7 +48,6 @@ import {
     providers: [
         LoginService,
         CameraService,
-        NetworkService,
         AppService
     ],
     bootstrap: [AppComponent]

@@ -1,8 +1,10 @@
-<div class="{{myLoginService.isLoginProcessRunning === true ? 'active' : ''}}" id="loading-overlay"><img src="app/images/loading.svg"/></div>
+<div class="{{myLoginService.isLoginProcessRunning === true ? 'active' : ''}}" id="loading-overlay">
+    <img src="app/images/loading.svg"/>
+</div>
 
 <p-growl [life]="2000" [value]="this.myAppService.getGrowls()"></p-growl>
 
-<div (window:resize)="onWindowResize($event)"  class="carousel-inner">
+<div (window:resize)="onWindowResize($event)" class="carousel-inner">
 
     <div class="login item {{myLoginService.isLoggedIn() === true ? '' : 'active'}}">
         <video playsinline autoplay muted loop id="bgvid-login">
@@ -12,15 +14,15 @@
 
         <div class="container login-container">
             <div class="row">
-                <h1 class="col-md-8 col-md-offset-2">Stereo | <span>Remote</span></h1>
+                <h1 class="col-md-8 col-md-offset-2">Stereo | <span>Remote C300</span></h1>
                 <login-form></login-form>
             </div>
         </div>
     </div>
 
     <!---------------------------------  MAIN PAGE   -------------------------->
-    <div *ngIf="myLoginService.isLoggedIn()" id="main-page" class="main-page item {{myLoginService.isLoggedIn() === true ? 'active' : ''}}">
-
+    <div *ngIf="myLoginService.isLoggedIn()" id="main-page"
+         class="main-page item {{myLoginService.isLoggedIn() === true ? 'active' : ''}}">
 
         <video playsinline autoplay muted loop id="bgvid-control">
             <source src="./app/videos/Bokeh-Tov.webm" type="video/webm">
@@ -28,8 +30,10 @@
         </video>
 
         <div class="topbar navbar navbar-inverse">
-            <i (click)="myCameraService.toggleCameraSidebar('left');adaptMiddleColumnSize();" class="sidebarMenu left fa fa-bars" aria-hidden="true"></i>
-            <i (click)="myCameraService.toggleCameraSidebar('right');adaptMiddleColumnSize();" class="sidebarMenu right fa fa-bars" aria-hidden="true"></i>
+            <i (click)="myCameraService.toggleCameraSidebar('left');adaptMiddleColumnSize();"
+               class="sidebarMenu left fa fa-bars" aria-hidden="true"></i>
+            <i (click)="myCameraService.toggleCameraSidebar('right');adaptMiddleColumnSize();"
+               class="sidebarMenu right fa fa-bars" aria-hidden="true"></i>
             <div class="settings-top-bar">
                 <p-toggleButton onLabel="Solo"
                                 offLabel="Sync"
@@ -38,13 +42,15 @@
                                 (onChange)="myAppService.ToggleMirror();myCameraService.mirrorProperties()">
                 </p-toggleButton>
                 <span class="btn button" href="#"><i class="icon-align-left"></i></span>
-                <button pButton (click)="this.myCameraService.pingCameras();" type="button" icon="fa-bell-o" label="Ping Cameras"></button>
+                <button pButton (click)="this.myCameraService.pingCameras();" type="button" icon="fa-bell-o"
+                        label="Ping Cameras"></button>
             </div>
         </div>
 
 
         <div class="row content">
-            <div id="left-settings-column" class="left-column settings-column col-md-2 {{myCameraService.isCameraSidebarActive('left') === true ? 'active' : 'inactive'}}" >
+            <div id="left-settings-column"
+                 class="left-column settings-column col-md-2 {{myCameraService.isCameraSidebarActive('left') === true ? 'active' : 'inactive'}}">
                 <camera [name]="'left'"></camera>
             </div>
 
@@ -58,14 +64,15 @@
                     </div>
                     <div id="live-view-image-right" class="live-view-image">
                         <liveview
-                            [props]="this.myCameraService.getLiveViewProps('right')"
-                            [cameraName]="'right'">
+                                [props]="this.myCameraService.getLiveViewProps('right')"
+                                [cameraName]="'right'">
                         </liveview>
                     </div>
                 </div>
             </div>
 
-            <div id="right-settings-column" class="right-column settings-column col-md-2 {{myCameraService.isCameraSidebarActive('right') === true ? 'active' : 'inactive'}}">
+            <div id="right-settings-column"
+                 class="right-column settings-column col-md-2 {{myCameraService.isCameraSidebarActive('right') === true ? 'active' : 'inactive'}}">
                 <camera [name]="'right'"></camera>
             </div>
         </div>

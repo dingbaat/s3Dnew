@@ -1,12 +1,12 @@
 export const mirrorProps = [
+    "Owbm",
+    "Ossm",
+    "Ogcm",
     "rec",
     "nd",
-    "Owbm",
-    "Owbv",
     "Oav",
-    "Ossm",
+    "Owbv",
     "Ossv",
-    "Ogcm",
     "Ogcv"
 ];
 
@@ -59,7 +59,7 @@ export class Model {
         "lv": {"val": "false", "state": "success"},
         "seq": {"val": 2, "state": "success"},
         "mode": {"val": "Ctrl", "state": "success"},
-        "rec": {"val": "off", "state": "success"},
+        "rec": {"val": "rec", "state": "success"},
         "com": {"val": 6, "state": "success"},
         "batt": {"val": 1, "state": "success"},
         "tc": {"val": "00:00:00:00", "state": "success"},
@@ -868,7 +868,7 @@ export class Model {
             "type": "toggle",
             "path": "rec",
             "queries": [
-                {"key": "cmd", "value": "trig", "name": "Start/Stop Recording"}
+                {"key": "cmd", "value": "trig", "name": "Record"}
             ]
         },
         {

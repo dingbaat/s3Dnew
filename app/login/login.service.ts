@@ -1,5 +1,4 @@
 import {Injectable, NgZone} from '@angular/core';
-import {NetworkService} from "../utils/network.service";
 import {Http, Response} from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -26,13 +25,11 @@ export class LoginService {
     private cookie_left: any;
     private cookie_right: any;
     private current_login_component: LoginComponent;
-    public loggedIn: boolean = false;
+    public loggedIn: boolean = true;
     public isLoginProcessRunning:boolean = false;
 
-    private myNetworkService: NetworkService;
 
-    constructor(private networkService: NetworkService, private http: Http, private zone: NgZone) {
-        this.myNetworkService = networkService;
+    constructor(private http: Http, private zone: NgZone) {
 
         this.login_steps = {"left": 0, "right": 0};
 

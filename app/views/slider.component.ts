@@ -143,15 +143,15 @@ export class SliderComponent {
         return NaN;
     }
 
-    sendPropResetRequest() {
-
-        this.propResetRequested.emit([this.prop.desc]);
-    }
-
     sendPropertyChangeRequest(request: any) {
 
         this.propChangeRequested.emit([`getprop?r=${request.key}`, '']);
         this.propChangeRequested.emit([`${this.prop.path}?${request.key}=${request.value}`, this.prop.desc]);
+    }
+
+    sendPropResetRequest() {
+
+        this.propResetRequested.emit([this.prop.desc]);
     }
 
 }
